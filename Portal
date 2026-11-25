@@ -1,0 +1,997 @@
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Integrabuild AI Team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE work: an operations floor the owner walks through
+   IDEA an isometric architect's floor plan of the company HQ, in the brand's navy and gold
+   PICTURE the office itself: three departments, desks, live screens, a status lamp per employee
+   COLOUR navy #0e2240 band and floor, gold #c9a227 accent, white/deep-navy ground below
+   TYPE IBM Plex Sans Arabic 700 for titles, 400 for text
+   LAYOUT laptop: title row with clock and status, office full width, picked employee strip under it; phone: title, office, strip, then sections stacked */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0a1628);--ink:light-dark(#0e1a2b,#e9eef6);--muted:light-dark(#566275,#9fb0c8);--line:light-dark(#dde3ec,#22344f);--panel:light-dark(#f4f6fa,#111f36);--navy:#0e2240;--gold:#c9a227;--ok:#3ccf8e;--off:#7d8aa0}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans Arabic",Tahoma,sans-serif;overflow-x:clip}
+a{color:inherit}
+.wrap{max-width:1240px;margin:0 auto}
+.band{padding-block:clamp(28px,4vw,64px);padding-inline:max(5vw,16px)}
+.nav{background:var(--navy);color:#fff;padding-inline:max(5vw,16px);border-bottom:1px solid #ffffff1a}
+.nav .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 24px;min-height:60px}
+.brand{font-weight:700;font-size:18px;letter-spacing:-.01em}
+.brand b{color:var(--gold)}
+.links{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:15px}
+.links a{text-decoration:none;opacity:.85;padding:10px 0}
+.links a:hover,.links a:focus-visible{opacity:1;text-decoration:underline;text-underline-offset:6px}
+.hero{background:var(--navy);color:#fff;padding-top:clamp(20px,3vw,36px);padding-bottom:0}
+.hrow{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 32px}
+h1{font-size:clamp(32px,4.4vw,50px);line-height:1.05;letter-spacing:-.02em;margin:0;text-wrap:balance}
+.sub{color:#c7d3e6;margin:10px 0 0;max-width:60ch}
+.clock{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.time{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:8px;border:1px solid #ffffff33;border-radius:999px;padding:6px 14px;font-size:15px;white-space:nowrap}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--off)}
+.dot.on{background:var(--ok);box-shadow:0 0 0 4px #3ccf8e33}
+.scene{margin-top:18px;position:relative}
+.scene svg{display:block;width:100%;height:auto;max-height:760px}
+.scroll-scene{overflow-x:auto}
+@media(max-width:600px){.scene svg{width:760px;max-width:none;max-height:none}}
+.desk{cursor:pointer;outline:none}
+.desk:focus-visible .sel,.desk.picked .sel{opacity:1}
+.sel{opacity:0;transition:opacity .2s}
+.lbl{font:700 13px "IBM Plex Sans Arabic",sans-serif;fill:#fff;paint-order:stroke;stroke:#0e2240;stroke-width:5px}
+.lbl2{font:500 12.5px "IBM Plex Sans Arabic",sans-serif;fill:#c9a227;paint-order:stroke;stroke:#0e2240;stroke-width:4px}
+.ln{stroke:#1d3f73;stroke-width:2;stroke-linecap:round}
+.ln.go{stroke-dasharray:60;stroke-dashoffset:60;animation:type 2.6s steps(14) infinite}
+@keyframes type{to{stroke-dashoffset:0}}
+@media (prefers-reduced-motion:reduce){.ln.go{animation:none;stroke-dashoffset:0}}
+.strip{background:var(--panel);border-top:3px solid var(--gold)}
+.strip .wrap{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) minmax(0,1fr);gap:20px 32px;align-items:start}
+.who{display:flex;gap:14px;align-items:center}
+.av{flex:none;width:84px;height:92px}
+.av svg,.pt svg{display:block;width:100%;height:auto}
+.pt{margin:-8px -8px 4px;border-radius:14px;overflow:hidden;max-width:220px}
+.who h2{margin:0;font-size:22px;line-height:1.2}
+.who p{margin:2px 0 0;color:var(--muted);font-size:15px}
+.k{font-size:13px;color:var(--muted);margin:0 0 4px}
+.v{margin:0;font-weight:500}
+.now{display:flex;gap:8px;align-items:center}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;grid-column:1/-1}
+.tab{font:inherit;font-size:15px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.tab[aria-pressed=true]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tab:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.note{font-size:13px;color:var(--muted);margin:14px 0 0;grid-column:1/-1}
+h3{font-size:clamp(26px,3vw,34px);line-height:1.1;letter-spacing:-.02em;margin:0 0 6px}
+.lead{color:var(--muted);margin:0 0 24px;max-width:65ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.card h4{margin:0;font-size:20px}
+.card .role{color:var(--muted);margin:-8px 0 0;font-size:15px}
+.card ul{margin:0;padding-inline-start:18px}
+.card li{margin:2px 0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:13px;border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 10px;direction:ltr}
+.sched{display:grid;gap:10px}
+.day{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:12px;align-items:center}
+.day b{font-weight:500}
+.track{position:relative;height:40px;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+.shift{position:absolute;top:6px;bottom:6px;background:color-mix(in srgb,var(--navy) 18%,transparent);border-radius:5px}
+:root[data-theme=dark] .shift{background:#ffffff1c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]) .shift{background:#ffffff1c}}
+.mk{position:absolute;top:2px;bottom:2px;width:3px;border-radius:2px;background:var(--gold)}
+.mk.mgr{background:#e6261f}
+.mk.fin{background:#2f7de1}
+.mk.it{background:#12a594}
+.mk.meet{background:#ff8a3d}
+.mk.stand{background:#9b6bff}
+.hcard.span2{grid-column:span 2}
+@media(max-width:960px){.hcard.span2{grid-column:auto}}
+.nowline{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+.axis{display:grid;grid-template-columns:5.5em minmax(0,1fr);gap:12px;font-size:13px;color:var(--muted)}
+.axis div{display:flex;justify-content:space-between}
+.legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:14px;color:var(--muted);margin-top:12px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-inline-end:6px;vertical-align:-1px}
+.flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;counter-reset:s}
+.step{border-top:3px solid var(--gold);padding-top:12px}
+.step h4{margin:0 0 4px;font-size:18px}
+.step p{margin:0;color:var(--muted);font-size:15px}
+.cta{display:inline-flex;align-items:center;min-height:48px;padding:0 22px;border-radius:999px;background:var(--gold);color:#0e2240;font-weight:700;text-decoration:none;margin-top:24px}
+.cta:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+footer{background:var(--navy);color:#c7d3e6}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px 40px}
+footer b{color:#fff}
+footer p{margin:4px 0}
+.ltr{direction:ltr;unicode-bidi:isolate;white-space:nowrap}
+@media(max-width:900px){.cards{grid-template-columns:minmax(0,1fr)}.flow{grid-template-columns:repeat(2,minmax(0,1fr))}.strip .wrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.strip .who{grid-column:1/-1}}
+@media(max-width:600px){.flow{grid-template-columns:minmax(0,1fr)}.strip .wrap{grid-template-columns:minmax(0,1fr)}.time{font-size:24px}.day{grid-template-columns:4em minmax(0,1fr)}.axis{grid-template-columns:4em minmax(0,1fr)}.lbl{font-size:17px}}
+.langbtn{font:inherit;font-size:14px;font-weight:700;min-height:40px;padding:0 16px;border-radius:999px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer}
+.langbtn:hover{background:var(--gold);color:#0e2240}
+.langbtn:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.links{align-items:center}
+.hub{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.hcard{display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;text-decoration:none;color:inherit}
+.hcard strong{font-size:19px;line-height:1.25}
+.hcard span{color:var(--muted);font-size:15px}
+.hcard .hk{font-size:13px;color:var(--gold);font-weight:500}
+.hcard .next{color:var(--ink);font-weight:500;margin-top:auto;white-space:nowrap}
+.hcard ul{margin:4px 0 0;padding-inline-start:18px;color:var(--muted);font-size:15px}
+.hcard.prime{background:var(--navy);border-color:var(--navy);color:#fff}
+.hcard.prime span{color:#c7d3e6}
+.hcard.prime .hk{color:var(--gold)}
+a.hcard:hover{transform:translateY(-2px);transition:transform .15s}
+a.hcard:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.hcard.wide{grid-column:span 2}
+.chip{direction:ltr;unicode-bidi:isolate}
+
+
+.talk{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:28px;align-items:start}
+.pt.big{max-width:180px;margin:0 0 12px}
+.chat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.chatlog{height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding:4px}
+.msg{max-width:85%;padding:10px 14px;border-radius:14px;white-space:pre-wrap;line-height:1.6}
+.msg.me{align-self:flex-start;background:var(--navy);color:#fff;border-end-start-radius:4px}
+.msg.him{align-self:flex-end;background:var(--bg);border:1px solid var(--line);border-end-end-radius:4px}
+.chat-empty{color:var(--muted);margin:auto;text-align:center}
+.quick{display:flex;flex-wrap:wrap;gap:8px}
+.qbtn{font:inherit;font-size:14px;min-height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--gold);background:transparent;color:var(--ink);cursor:pointer}
+.qbtn:hover{background:color-mix(in srgb,var(--gold) 18%,transparent)}
+.chatform{display:flex;gap:8px}
+.chatform input{flex:1;font:inherit;font-size:16px;min-height:46px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.chatform input:focus-visible,.qbtn:focus-visible,.send:focus-visible,.clear:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.send{font:inherit;font-weight:700;min-height:46px;padding:0 20px;border-radius:12px;border:0;background:var(--gold);color:#0e2240;cursor:pointer}
+.send:disabled{opacity:.5;cursor:wait}
+.chatbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.chatbar .note{margin:0}
+.clear{font:inherit;font-size:13px;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;min-height:36px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:800px){.talk{grid-template-columns:minmax(0,1fr)}.chatlog{height:320px}}
+.pt-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px 24px}
+.po-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:8px 0 20px}
+.po-k{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.po-k b{display:block;font-size:clamp(26px,3vw,34px);line-height:1.1;font-variant-numeric:tabular-nums}
+.po-k span{color:var(--muted);font-size:14px}
+.po-k.warn b{color:#d9480f}
+.po-tabs{display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px}
+.po-tab{font:inherit;font-size:15px;min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.po-tab[aria-selected=true]{background:var(--navy);border-color:var(--navy);color:#fff}
+.po-tab:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.po-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,380px),1fr));gap:14px}
+.po-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.po-card h4{margin:0;font-size:17px}
+.po-row{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px}
+.po-meta{color:var(--muted);font-size:14px}
+.po-pill{border-radius:999px;padding:2px 10px;font-size:13px;border:1px solid var(--line);white-space:nowrap}
+.po-pill.hot{color:#d9480f;border-color:#d9480f}.po-pill.warm{color:#b7791f;border-color:#b7791f}.po-pill.ok{color:#12805c;border-color:#12805c}
+.po-block{white-space:pre-wrap;font-size:15px;margin:0}
+.po-card details summary{cursor:pointer;color:var(--muted);font-size:14px}
+.po-select,.po-form select,.po-form input{font:inherit;font-size:16px;min-height:44px;padding:0 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.po-btn{font:inherit;font-size:14px;min-height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.po-btn.go{background:var(--gold);border-color:var(--gold);color:#0e2240;font-weight:700}
+.po-bar{margin-bottom:12px}
+.po-table{width:100%;border-collapse:collapse;font-size:15px}
+.po-table th,.po-table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:start}
+.po-table th{color:var(--muted);font-weight:500;font-size:13px}
+.po-table td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.good{color:#12805c;font-weight:700}.bad{color:#d9480f;font-weight:700}
+.po-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end;margin-bottom:16px}
+.po-form label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.po-err{color:#d9480f}
+.po-sec h5{margin:12px 0 4px;font-size:14px;color:var(--muted);font-weight:500}
+</style>
+</head>
+<body>
+<nav class="nav" aria-label="nav">
+  <div class="wrap">
+    <div class="brand">IntegraBuild <b>·</b> <span data-t="brand">المقر الرقمي</span></div>
+    <div class="links"><a href="#portal" data-t="n_portal">البورتال</a><a href="#talk" data-t="n_talk">كلّم المدير</a><a href="#hub" data-t="n_hub">أدواتي</a><a href="#office" data-t="n_office">المكتب</a><a href="#teams" data-t="n_teams">الأقسام</a><a href="#hours" data-t="n_hours">الدوام</a><a href="#how" data-t="n_how">طريقة الشغل</a>
+      <button class="langbtn" id="langbtn" type="button" aria-label="Switch language">English</button></div>
+  </div>
+</nav>
+
+<header class="hero band" id="office">
+  <div class="wrap">
+    <div class="hrow">
+      <div>
+        <h1 data-t="h1">مقر فريق المبيعات والتسويق</h1>
+        <p class="sub" data-t="sub">ست موظفين ذكاء اصطناعي، ومكتب لكل قسم، ويوسف أبو عيد مديرهم. اضغط على أي مكتب لتشوف شو بيشتغل صاحبه.</p>
+      </div>
+      <div class="clock">
+        <span class="time" id="clock">--:--</span>
+        <span class="pill"><span class="dot" id="sdot"></span><span id="stext">…</span></span>
+      </div>
+    </div>
+    <div class="scene scroll-scene"><svg id="floor" role="img"></svg></div>
+  </div>
+</header>
+
+<section class="strip band" aria-live="polite">
+  <div class="wrap">
+    <div class="who"><div class="av" id="pav">س</div><div><h2 id="pname">…</h2><p id="prole">…</p></div></div>
+    <div><p class="k" data-t="k_now">شو بيعمل هلأ</p><p class="v now"><span class="dot" id="pdot"></span><span id="pnow">…</span></p></div>
+    <div><p class="k" data-t="k_next">التسليم الجاي</p><p class="v" id="pnext">…</p></div>
+    <div class="tabs" role="group">
+      <button class="tab" id="t-mgr" data-id="mgr" aria-pressed="false" data-t="tab_mgr">المدير التنفيذي</button>
+      <button class="tab" id="t-sales" data-id="sales" aria-pressed="true" data-t="tab_sales">المبيعات</button>
+      <button class="tab" id="t-mkt" data-id="mkt" aria-pressed="false" data-t="tab_mkt">التسويق</button>
+      <button class="tab" id="t-fin" data-id="fin" aria-pressed="false" data-t="tab_fin">المالية</button>
+      <button class="tab" id="t-it" data-id="it" aria-pressed="false" data-t="tab_it">التقنية</button>
+      <button class="tab" id="t-hr" data-id="hr" aria-pressed="false" data-t="tab_hr">الموارد البشرية</button>
+    </div>
+    <p class="note" data-t="note">المكتب رسم توضيحي: الحالة بتتغيّر حسب جدول الدوام بتوقيت الرياض. الشغل الفعلي بيتسلّم بلوحة الفريق وعلى جوالك الساعة 4:55 العصر.</p>
+  </div>
+</section>
+
+
+<section class="band" id="portal">
+  <div class="wrap">
+    <div class="pt-head">
+      <div>
+        <h3 data-t="po_h">بورتال الفريق</h3>
+        <p class="lead" data-t="po_p">كل شغل الفريق هون: التقارير، والفرص، والمحتوى، والمؤشرات، والتكاليف، والاجتماعات. بتعتمد وبتحرّك من نفس المكان.</p>
+      </div>
+      <p class="note" id="po-state">…</p>
+    </div>
+    <div class="po-kpis" id="po-kpis"></div>
+    <div class="po-tabs" role="tablist" id="po-tabs">
+      <button role="tab" class="po-tab" data-p="rep" data-t="pt_rep">آخر تقرير</button>
+      <button role="tab" class="po-tab" data-p="leads" data-t="pt_leads">الفرص</button>
+      <button role="tab" class="po-tab" data-p="content" data-t="pt_content">المحتوى</button>
+      <button role="tab" class="po-tab" data-p="kpi" data-t="pt_kpi">المؤشرات</button>
+      <button role="tab" class="po-tab" data-p="costs" data-t="pt_costs">التكاليف</button>
+      <button role="tab" class="po-tab" data-p="meet" data-t="pt_meet">الاجتماعات</button>
+    </div>
+    <p class="po-err" id="po-err" hidden></p>
+    <div class="po-panel" data-panel="rep" id="pp-rep"></div>
+    <div class="po-panel" data-panel="leads" hidden>
+      <div class="po-bar"><select id="po-rating" aria-label="rating"></select></div>
+      <div class="po-list" id="pp-leads"></div>
+    </div>
+    <div class="po-panel" data-panel="content" hidden><div class="po-list" id="pp-content"></div></div>
+    <div class="po-panel" data-panel="kpi" hidden><div class="scroll"><table class="po-table" id="pp-kpi"></table></div><p class="note" data-t="kpi_note">آخر 7 أيام بتوقيت الرياض. الأهداف مبدئية وإنت بتعدّلها.</p></div>
+    <div class="po-panel" data-panel="costs" hidden>
+      <form class="po-form" id="po-cost">
+        <label><span data-t="c_date">التاريخ</span><input type="date" id="pc-date" required></label>
+        <label><span data-t="c_item">البند</span><input type="text" id="pc-item" required></label>
+        <label><span data-t="c_cat">الفئة</span><select id="pc-cat"></select></label>
+        <label><span data-t="c_amt">المبلغ (ر.س)</span><input type="number" id="pc-amt" min="0" step="0.01" inputmode="decimal" required></label>
+        <button class="send" type="submit" data-t="c_add">أضف التكلفة</button>
+      </form>
+      <div class="po-list" id="pp-costs"></div>
+    </div>
+    <div class="po-panel" data-panel="meet" hidden id="pp-meet"></div>
+  </div>
+</section>
+
+<section class="band" id="talk" style="background:var(--panel)">
+  <div class="wrap talk">
+    <div class="talk-side">
+      <div class="pt big" id="mgrpt"></div>
+      <h3 data-t="talk_h">مكتب المدير: اسأله عن الأبديت</h3>
+      <p class="lead" data-t="talk_p">احكي مع المدير التنفيذي بأي وقت. بيجاوبك من آخر تقارير الفريق ومحاضر الاجتماعات، وبيقلك بصراحة إذا في شي لسه ما وصله.</p>
+      <p class="note" id="briefst">…</p>
+    </div>
+    <div class="chat">
+      <div class="chatlog" id="chatlog" aria-live="polite"></div>
+      <div class="quick" id="quick"></div>
+      <form class="chatform" id="chatform">
+        <label for="chatin" class="sr" data-t="talk_lbl">رسالتك للمدير</label>
+        <input id="chatin" type="text" autocomplete="off">
+        <button class="send" id="chatsend" type="submit" data-t="send">إرسال</button>
+      </form>
+      <div class="chatbar"><p class="note" id="chatnote" data-t="talk_note">المدير بيحكي وبينصح بس، وما بينفّذ ولا بيبعت شي لحدا.</p><button class="clear" id="chatclear" type="button" data-t="clear">مسح المحادثة</button></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="hub" style="background:var(--panel)">
+  <div class="wrap">
+    <h3 data-t="hub_h">كل أدوات الفريق بمكان واحد</h3>
+    <p class="lead" data-t="hub_p">ارجع لهون كل ما بدك توصل لأي شي: اللوحة، المواعيد، السكيلز، الملفات، والمعلومات اللي لسه ناقصة.</p>
+    <div class="hub">
+      <a class="hcard prime span2" href="#portal">
+        <span class="hk" data-t="c1_k">افتح</span><strong data-t="c1_t">بورتال الفريق</strong><span data-t="c1_d">التقارير، فرص المبيعات، المحتوى، مؤشرات الأداء (KPI)، والتكاليف.</span></a>
+      <div class="hcard"><span class="hk" data-t="c2_k">مهمة مجدولة</span><strong data-t="c2_t">تقرير الدوام واجتماع نهاية اليوم</strong><span data-t="c2_d">الأحد للخميس: التقرير الساعة 4:55، وبعده الساعة 5:07 المدير بيجمع الفريق بغرفة الاجتماعات ويسأل كل واحد شو أنجز. الاثنين بيوصلوا جوالك.</span><span class="next" id="n1"></span></div>
+      <div class="hcard"><span class="hk" data-t="c2_k">مهمة مجدولة</span><strong data-t="c3_t">مراجعة المدير التنفيذي</strong><span data-t="c3_d">كل خميس الساعة 5:26 العصر. تقييم الفريق وتعديلات السكيلز لاعتمادك.</span><span class="next" id="n2"></span></div>
+      <div class="hcard"><span class="hk" data-t="c2_k">مهمة مجدولة</span><strong data-t="c7_t">التقرير المالي الأسبوعي</strong><span data-t="c7_d">كل خميس الساعة 5:12 العصر. التكاليف وتكلفة الفرصة والتوصيات.</span><span class="next" id="n3"></span></div>
+      <div class="hcard"><span class="hk" data-t="c2_k">مهمة مجدولة</span><strong data-t="c9_t">مراجعة الأنظمة (IT)</strong><span data-t="c9_d">كل أربعاء الساعة 5:38 العصر. صحة المهام واللوحة والأرصدة، واقتراحات تطوير.</span><span class="next" id="n4"></span></div>
+      <div class="hcard"><span class="hk" data-t="c2_k">مهمة مجدولة</span><strong data-t="c10_t">خطة القوى العاملة (HR)</strong><span data-t="c10_d">أول كل شهر الساعة 10:21 الصبح. أداء الفريق، والفجوات، ومين نعيّن أو ندمج.</span><span class="next" id="n5"></span></div>
+      <div class="hcard"><span class="hk" data-t="c2_k">مهمة مجدولة</span><strong data-t="c11_t">اجتماع الفريق الأسبوعي</strong><span data-t="c11_d">كل أحد الساعة 9:13 الصبح. كل موظف بيعرض أرقامه، وبيطلع محضر بالقرارات والمهام.</span><span class="next" id="n6"></span></div>
+      <div class="hcard"><span class="hk" data-t="c4_k">بمشروع Integrabuild Team</span><strong data-t="c4_t">ملفات الشركة</strong>
+        <ul><li><span class="ltr">company-facts.md</span> · <span data-t="f1">المنتجات والداتا شيت والتواصل</span></li><li><span class="ltr">team-setup.md</span> · <span data-t="f2">دليل تشغيل الفريق</span></li></ul></div>
+      <div class="hcard span2"><span class="hk" data-t="c5_k">قل اسمه بأي محادثة</span><strong data-t="c5_t">السكيلز المعتمدة</strong>
+        <div class="chips" id="skills"></div>
+        <span data-t="c5_d">مثال: "يا سيلز جهزلي عرض سعر"، "يا تسويق اعملي خطة الأسبوع"، "يا مدير طوّر الفريق".</span></div>
+      <div class="hcard"><span class="hk" data-t="c6_k">بحاجة منك</span><strong data-t="c6_t">معلومات ناقصة</strong><ul id="missing"></ul></div>
+    </div>
+    <p class="note" data-t="priv">الموقع خاص فيك، وما حدا بيشوفه إلا إذا إنت شاركته.</p>
+  </div>
+</section>
+
+<section class="band" id="teams" style="background:var(--panel)">
+  <div class="wrap">
+    <h3 data-t="teams_h">كل قسم إله موظف بمهارات محددة</h3>
+    <p class="lead" data-t="teams_p">كل موظف بيشتغل من خلال سكيلز إنت اعتمدتها. والمدير التنفيذي بيطوّرها كل أسبوع وبيرجعلك بالتعديلات لتوافق عليها.</p>
+    <div class="cards" id="cards"></div>
+  </div>
+</section>
+
+<section class="band" id="hours">
+  <div class="wrap">
+    <h3 data-t="hours_h">الدوام من الأحد للخميس، والتسليم قبل الخامسة</h3>
+    <p class="lead" data-t="hours_p">البرتقالي اجتماع الفريق يوم الأحد، والذهبي تقرير الدوام، والأخضر مراجعة الأنظمة يوم الأربعاء، والأزرق التقرير المالي، والأحمر مراجعة المدير التنفيذي يوم الخميس. والخط الغامق هو الوقت الحالي.</p>
+    <div class="sched" id="sched"></div>
+    <div class="axis" aria-hidden="true"><span></span><div id="axis"></div></div>
+    <div class="legend"><span><i style="background:var(--gold)"></i><span data-t="lg1">تقرير الدوام 4:55</span></span><span><i style="background:#9b6bff"></i><span data-t="lg7">اجتماع نهاية اليوم 5:07</span></span><span><i style="background:#ff8a3d"></i><span data-t="lg6">اجتماع الفريق 9:13</span></span><span><i style="background:#12a594"></i><span data-t="lg5">مراجعة الأنظمة 5:38</span></span><span><i style="background:#2f7de1"></i><span data-t="lg4">التقرير المالي 5:12</span></span><span><i style="background:#e6261f"></i><span data-t="lg2">مراجعة المدير 5:26</span></span><span><i style="background:color-mix(in srgb,#0e2240 25%,transparent)"></i><span data-t="lg3">ساعات الدوام 8 لـ 5</span></span></div>
+  </div>
+</section>
+
+<section class="band" id="how" style="background:var(--panel)">
+  <div class="wrap">
+    <h3 data-t="how_h">ما في شي بيطلع لعميل قبل موافقتك</h3>
+    <p class="lead" data-t="how_p">الفريق بيشتغل لحاله طول الدوام، بس القرار والإرسال بيضلوا بإيدك.</p>
+    <div class="flow">
+      <div class="step"><h4 data-t="s1h">يدوّرون</h4><p data-t="s1p">المبيعات بيدوّر على ترسيات ومشاريع جديدة بالسعودية ويتحقق من كل مصدر.</p></div>
+      <div class="step"><h4 data-t="s2h">يجهّزون</h4><p data-t="s2p">3 فرص مع رسائل واتساب وإيميل، ومنشور جاهز، وبريف ريل بثيم الكحلي والذهبي.</p></div>
+      <div class="step"><h4 data-t="s3h">يسلّمون</h4><p data-t="s3p">كل شي بينحفظ بلوحة الفريق، والتقرير بيوصل جوالك الساعة 4:55.</p></div>
+      <div class="step"><h4 data-t="s4h">إنت بتقرر</h4><p data-t="s4p">بتعتمد المحتوى وبتحرّك الفرص، والمدير التنفيذي بيتعلّم من قراراتك كل خميس.</p></div>
+    </div>
+    <a class="cta" href="#portal" data-t="cta">افتح البورتال</a>
+  </div>
+</section>
+
+<footer class="band">
+  <div class="wrap">
+    <div><p><b>IntegraBuild</b></p><p data-t="ft1">مصنّع سعودي لأنظمة البناء المتقدمة، الرياض</p></div>
+    <div><p><b data-t="ft2">تواصل</b></p><p class="ltr">+966 11 480 0505</p><p class="ltr">info@integrabuild.sa</p><p><a class="ltr" href="https://integrabuild.sa" target="_blank" rel="noopener">integrabuild.sa</a></p></div>
+    <div><p><b data-t="ft3">العنوان</b></p><p data-t="ft4">طريق الأمير تركي بن عبدالعزيز الأول، المحمدية، الرياض</p></div>
+  </div>
+</footer>
+
+<script>
+{
+const T = {
+ ar: {
+  title:'Integrabuild AI Team', brand:'المقر الرقمي', n_hub:'أدواتي', n_office:'المكتب', n_teams:'الأقسام', n_hours:'الدوام', n_how:'طريقة الشغل',
+  h1:'مقر فريق المبيعات والتسويق', sub:'ست موظفين ذكاء اصطناعي، ومكتب لكل قسم، ويوسف أبو عيد مديرهم. اضغط على أي مكتب لتشوف شو بيشتغل صاحبه.',
+  k_now:'شو بيعمل هلأ', k_next:'التسليم الجاي', tab_mgr:'المدير التنفيذي', tab_sales:'المبيعات', tab_mkt:'التسويق', tab_fin:'المالية', tab_it:'التقنية', tab_hr:'الموارد البشرية', n_portal:'البورتال', po_h:'بورتال الفريق', po_p:'كل شغل الفريق هون: التقارير، والفرص، والمحتوى، والمؤشرات، والتكاليف، والاجتماعات. بتعتمد وبتحرّك من نفس المكان.', pt_rep:'آخر تقرير', pt_leads:'الفرص', pt_content:'المحتوى', pt_kpi:'المؤشرات', pt_costs:'التكاليف', pt_meet:'الاجتماعات', kpi_note:'آخر 7 أيام بتوقيت الرياض. الأهداف مبدئية وإنت بتعدّلها.', c_date:'التاريخ', c_item:'البند', c_cat:'الفئة', c_amt:'المبلغ (ر.س)', c_add:'أضف التكلفة', po_loading:'عم يحمّل…', po_live:'مباشر: بيتحدّث لحاله', po_off:'البورتال مش متاح هون. افتح الموقع من Claude وسجّل دخولك.', po_slow:'البيانات بتتأخر. ممكن تكون مش آخر نسخة.', po_saveErr:'ما انحفظ التعديل. جرّب كمان مرة.', pk_leads:'كل الفرص', pk_new:'فرص لسه جديدة', pk_pend:'محتوى بانتظارك', pk_cost:'تكاليف الشهر (ر.س)', pk_last:'آخر تقرير', po_noRep:'لسه ما في تقارير.', r_done:'المنجز', r_needs:'بحاجة منك', r_plan:'خطة بكرة', all:'كل التقييمات', po_noLeads:'ما في فرص.', src:'المصدر', status:'الحالة', drafts:'مسودات الرسائل', po_noContent:'ما في محتوى.', script:'البريف والسكريبت', approve:'اعتمد ✓', reject:'ارفض', published:'انتشر ✓', kh_who:'الموظف', kh_k:'المؤشر', kh_v:'القيمة', kh_t:'الهدف', kh_s:'الحالة', w_sales:'المبيعات', w_mkt:'التسويق', w_team:'الفريق', k_leads:'فرص جديدة', k_hot:'نسبة الساخن', k_moved:'حرّكتها من جديد', k_content:'قطع محتوى', k_appr:'معتمد أو منشور', k_days:'أيام التقرير', finTitle:'المالية هالشهر', finTotal:'المجموع', finLead:'تكلفة الفرصة', finContent:'تكلفة المحتوى المعتمد', sar:'ر.س', del:'حذف', po_noMeet:'لسه ما في محاضر.', weekly:'اجتماع الأسبوع', m_sum:'الخلاصة', m_upd:'عرض كل موظف', m_dec:'القرارات وتعليق المدير', m_act:'المهام', m_need:'بانتظارك', n_talk:'كلّم المدير', talk_h:'مكتب المدير: اسأله عن الأبديت', talk_p:'احكي مع المدير التنفيذي بأي وقت. بيجاوبك من آخر تقارير الفريق ومحاضر الاجتماعات، وبيقلك بصراحة إذا في شي لسه ما وصله.', talk_lbl:'رسالتك للمدير', send:'إرسال', clear:'مسح المحادثة', talk_note:'المدير بيحكي وبينصح بس، وما بينفّذ ولا بيبعت شي لحدا.', chatEmpty:'اسأل المدير: شو الأبديت؟', chatOff:'المحادثة مش متاحة هون. افتح الموقع من Claude وسجّل دخولك.', chatBusy:'في ضغط هلأ، جرّب بعد شوي.', chatErr:'ما قدرت أرد هلأ. جرّب كمان مرة.', briefOk:'عندي {n} ملخص، آخرهم بتاريخ {d}.', briefNone:'ما في ملخصات من الفريق لسه. أول ملخص بعد تقرير 4:55.', quick:['شو الأبديت اليوم؟','شو بحاجة مني؟','مين متأخر عن هدفه؟','شو خطة الأسبوع؟'], c11_t:'اجتماع الفريق الأسبوعي', c11_d:'كل أحد الساعة 9:13 الصبح. كل موظف بيعرض أرقامه، وبيطلع محضر بالقرارات والمهام.', lg6:'اجتماع الفريق 9:13', inMeeting:'باجتماع الفريق الأسبوعي', inStandup:'بغرفة الاجتماعات: شو أنجزنا اليوم', lg7:'اجتماع نهاية اليوم 5:07', c10_t:'خطة القوى العاملة (HR)', c10_d:'أول كل شهر الساعة 10:21 الصبح. أداء الفريق، والفجوات، ومين نعيّن أو ندمج.', nextHr:'خطة القوى العاملة ', c9_t:'مراجعة الأنظمة (IT)', c9_d:'كل أربعاء الساعة 5:38 العصر. صحة المهام واللوحة والأرصدة، واقتراحات تطوير.', lg5:'مراجعة الأنظمة 5:38', nextIt:'مراجعة الأنظمة ', c7_t:'التقرير المالي الأسبوعي', c7_d:'كل خميس الساعة 5:12 العصر. التكاليف وتكلفة الفرصة والتوصيات.', c8_k:'باللوحة', c8_t:'مؤشرات الأداء والتكاليف', c8_d:'جدول KPI لكل موظف مقابل الهدف، ونموذج لإدخال التكاليف.', lg4:'التقرير المالي 5:12',
+  note:'المكتب رسم توضيحي: الحالة بتتغيّر حسب جدول الدوام بتوقيت الرياض. الشغل الفعلي بيتسلّم بلوحة الفريق وعلى جوالك الساعة 4:55 العصر.',
+  hub_h:'كل أدوات الفريق بمكان واحد', hub_p:'ارجع لهون كل ما بدك توصل لأي شي: اللوحة، المواعيد، السكيلز، الملفات، والمعلومات اللي لسه ناقصة.',
+  c1_k:'افتح', c1_t:'بورتال الفريق', c1_d:'التقارير، فرص المبيعات، المحتوى، مؤشرات الأداء (KPI)، والتكاليف.',
+  c2_k:'مهمة مجدولة', c2_t:'تقرير الدوام واجتماع نهاية اليوم', c2_d:'الأحد للخميس: التقرير الساعة 4:55، وبعده الساعة 5:07 المدير بيجمع الفريق بغرفة الاجتماعات ويسأل كل واحد شو أنجز. الاثنين بيوصلوا جوالك.',
+  c3_t:'مراجعة المدير التنفيذي', c3_d:'كل خميس الساعة 5:26 العصر. تقييم الفريق وتعديلات السكيلز لاعتمادك.',
+  c4_k:'بمشروع Integrabuild Team', c4_t:'ملفات الشركة', f1:'المنتجات والداتا شيت والتواصل', f2:'دليل تشغيل الفريق',
+  c5_k:'قل اسمه بأي محادثة', c5_t:'السكيلز المعتمدة', c5_d:'مثال: "يا سيلز جهزلي عرض سعر"، "يا تسويق اعملي خطة الأسبوع"، "يا مدير طوّر الفريق".',
+  c6_k:'بحاجة منك', c6_t:'معلومات ناقصة', priv:'الموقع خاص فيك، وما حدا بيشوفه إلا إذا إنت شاركته.',
+  missing:['طريقة التسعير','مدد التسليم','المشاريع المنفذة المسموح نذكرها','الاسم المعتمد للواجهات (Badael؟)','تأكيد قيم R بالداتا شيت'],
+  teams_h:'كل قسم إله موظف بمهارات محددة', teams_p:'كل موظف بيشتغل من خلال سكيلز إنت اعتمدتها. والمدير التنفيذي بيطوّرها كل أسبوع وبيرجعلك بالتعديلات لتوافق عليها.',
+  hours_h:'الدوام من الأحد للخميس، والتسليم قبل الخامسة', hours_p:'البرتقالي اجتماع الفريق يوم الأحد، والذهبي تقرير الدوام، والأخضر مراجعة الأنظمة يوم الأربعاء، والأزرق التقرير المالي، والأحمر مراجعة المدير التنفيذي يوم الخميس. والخط الغامق هو الوقت الحالي.',
+  lg1:'تقرير الدوام 4:55', lg2:'مراجعة المدير 5:26', lg3:'ساعات الدوام 8 لـ 5',
+  how_h:'ما في شي بيطلع لعميل قبل موافقتك', how_p:'الفريق بيشتغل لحاله طول الدوام، بس القرار والإرسال بيضلوا بإيدك.',
+  s1h:'يدوّرون', s1p:'المبيعات بيدوّر على ترسيات ومشاريع جديدة بالسعودية ويتحقق من كل مصدر.',
+  s2h:'يجهّزون', s2p:'3 فرص مع رسائل واتساب وإيميل، ومنشور جاهز، وبريف ريل بثيم الكحلي والذهبي.',
+  s3h:'يسلّمون', s3p:'كل شي بينحفظ بلوحة الفريق، والتقرير بيوصل جوالك الساعة 4:55.',
+  s4h:'إنت بتقرر', s4p:'بتعتمد المحتوى وبتحرّك الفرص، والمدير التنفيذي بيتعلّم من قراراتك كل خميس.',
+  cta:'افتح البورتال', ft1:'مصنّع سعودي لأنظمة البناء المتقدمة، الرياض', ft2:'تواصل', ft3:'العنوان', ft4:'طريق الأمير تركي بن عبدالعزيز الأول، المحمدية، الرياض',
+  days:['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'], off:'عطلة', am:'ص', pm:'م', today:'اليوم', tomorrow:'بكرة',
+  onduty:'الفريق على رأس عمله', offduty:'خارج الدوام', weekend:'عطلة نهاية الأسبوع', prep:'يجهّز تقرير الدوام',
+  nextReport:'تقرير الدوام ', nextReview:'المراجعة الأسبوعية ', nextFin:'التقرير المالي ', axis:['8 ص','10','12 م','2','4','6 م'], lang:'English', svg:'مخطط المكتب',
+  rooms:[['مكتب المدير التنفيذي','إدارة وتطوير'],['قسم المبيعات','فرص وعروض أسعار'],['ستوديو التسويق','محتوى وريلز'],['قسم المالية','تكاليف وتوصيات'],['قسم التقنية','أنظمة وسيرفرات'],['غرفة الاجتماعات','يومياً 5:07 والأحد 9:13'],['الموارد البشرية','أداء وتوظيف'],['منطقة التوسعة والاستراحة','مكاتب للموظفين الجدد']], vacant:'شاغر',
+  team:{
+   mgr:{name:'المدير التنفيذي', role:'إدارة الفريق وتطويره', av:'م', room:'مكتب المدير', tasks:['يراجع شغل الأسبوع كل خميس ويقيّم كل موظف من 5','يكتشف سبب الأخطاء المتكررة','يقترح تطوير السكيلز وإنت بتعتمد','يحدد أهم 3 قرارات للأسبوع الجاي'], work:['يتابع شغل الفريق','يقرأ تقارير الأسبوع','يراجع جودة المحتوى','يفتح مصادر الفرص ويتأكد منها'], thu:'يحضّر مراجعة الخميس'},
+   hr:{name:'مسؤولة الموارد البشرية', role:'الموارد البشرية (HR)', av:'HR', room:'الموارد البشرية', tasks:['تقيس أداء كل موظف شهرياً مقابل أهدافه','تكتشف الفجوات والتداخل بين الأدوار','ترشّح تعيين أو دمج بالدليل، وإنت بتقرر','تجهّز الوصف الوظيفي وسكيل أي موظف جديد'], work:['تراجع أداء الفريق','تحدّث الهيكل التنظيمي','تدرس الفجوات بين الأدوار','تجهّز ملفات المرشحين'], thu:'تتابع الفريق'},
+   it:{name:'مسؤول التقنية', role:'قسم التقنية (IT)', av:'IT', room:'قسم التقنية', tasks:['يفحص إن كل المهام المجدولة شغالة ونجحت','يدقق بيانات اللوحة ويلقط النواقص والتكرار','يراقب أرصدة الأدوات قبل ما تخلص','يقترح لحد 5 تطويرات للنظام كل أربعاء'], work:['يفحص المهام المجدولة','يدقق بيانات اللوحة','يراجع أرصدة الأدوات','يجهّز اقتراحات التطوير'], thu:'يتابع الأنظمة'},
+   fin:{name:'المدير المالي', role:'قسم المالية', av:'ف', room:'قسم المالية', tasks:['يحسب تكاليف الفريق الشهرية حسب الفئة','يحسب تكلفة الفرصة والمحتوى المعتمد والصفقة','يسعّر عروض الأسعار ويحسب الهامش من أرقامك','يقدم 3 توصيات مالية كل خميس'], work:['يراجع التكاليف المدخلة','يحسب تكلفة الفرصة','يدوّر على الهدر','يجهّز التوصيات'], thu:'يحضّر التقرير المالي'},
+   sales:{name:'موظف المبيعات', role:'قسم المبيعات', av:'س', room:'قسم المبيعات', tasks:['يدوّر على ترسيات ومشاريع جديدة','يقيّم كل فرصة: ساخن، دافئ، بارد','يكتب رسائل واتساب وإيميل','يجهّز مسودات عروض الأسعار'], work:['يدوّر على ترسيات جديدة','يتحقق من مصادر الأخبار','يقيّم الفرص','يكتب مسودات الرسائل','يحفظ الفرص باللوحة']},
+   mkt:{name:'موظف التسويق', role:'قسم التسويق', av:'ت', room:'قسم التسويق', tasks:['يجهّز منشور بكرة بالسعودي','يكتب بريف الريل وسكريبت التعليق الصوتي','يلتزم بالثيم الكحلي والذهبي','يقترح خطة المحتوى الأسبوعية'], work:['يكتب هوك المنشور','يكتب سكريبت الريل','يراجع الثيم والألوان','يجهّز الهاشتاقات','يحفظ المحتوى باللوحة']}
+  }
+ },
+ en: {
+  title:'Integrabuild AI Team', brand:'Digital HQ', n_hub:'My tools', n_office:'Office', n_teams:'Departments', n_hours:'Hours', n_how:'How it works',
+  h1:'Sales & Marketing Team HQ', sub:'Six AI employees, one office per department, and Yousef Abu Eid as their manager. Tap any desk to see what its owner is working on.',
+  k_now:'Doing right now', k_next:'Next delivery', tab_mgr:'Executive manager', tab_sales:'Sales', tab_mkt:'Marketing', tab_fin:'Finance', tab_it:'IT', tab_hr:'HR', n_portal:'Portal', po_h:'Team portal', po_p:'All the team’s work in one place: reports, leads, content, KPIs, costs and meetings. Approve and update right here.', pt_rep:'Latest report', pt_leads:'Leads', pt_content:'Content', pt_kpi:'KPIs', pt_costs:'Costs', pt_meet:'Meetings', kpi_note:'Last 7 days, Riyadh time. Targets are a starting point you can change.', c_date:'Date', c_item:'Item', c_cat:'Category', c_amt:'Amount (SAR)', c_add:'Add cost', po_loading:'Loading…', po_live:'Live: updates by itself', po_off:'The portal isn’t available here. Open the site in Claude and sign in.', po_slow:'Data is slow to arrive. It may not be the latest.', po_saveErr:'That change wasn’t saved. Try again.', pk_leads:'All leads', pk_new:'Leads still new', pk_pend:'Content awaiting you', pk_cost:'Costs this month (SAR)', pk_last:'Latest report', po_noRep:'No reports yet.', r_done:'Done', r_needs:'Needs from you', r_plan:'Tomorrow', all:'All ratings', po_noLeads:'No leads.', src:'Source', status:'Status', drafts:'Message drafts', po_noContent:'No content.', script:'Brief and script', approve:'Approve ✓', reject:'Reject', published:'Posted ✓', kh_who:'Employee', kh_k:'KPI', kh_v:'Value', kh_t:'Target', kh_s:'Status', w_sales:'Sales', w_mkt:'Marketing', w_team:'Team', k_leads:'New leads', k_hot:'Hot share', k_moved:'Moved past new', k_content:'Content pieces', k_appr:'Approved or posted', k_days:'Report days', finTitle:'Finance this month', finTotal:'Total', finLead:'Cost per lead', finContent:'Cost per approved content', sar:'SAR', del:'Delete', po_noMeet:'No minutes yet.', weekly:'Weekly meeting', m_sum:'Summary', m_upd:'Each employee', m_dec:'Decisions and manager notes', m_act:'Tasks', m_need:'Waiting for you', n_talk:'Talk to manager', talk_h:'Manager’s office: ask for the update', talk_p:'Talk to the executive manager any time. He answers from the team’s latest reports and meeting minutes, and tells you plainly when something hasn’t reached him yet.', talk_lbl:'Your message to the manager', send:'Send', clear:'Clear chat', talk_note:'The manager talks and advises only; he doesn’t act or send anything to anyone.', chatEmpty:'Ask the manager: what’s the update?', chatOff:'Chat isn’t available here. Open the site in Claude and sign in.', chatBusy:'Busy right now, try again shortly.', chatErr:'Couldn’t answer right now. Try again.', briefOk:'I have {n} briefs, latest on {d}.', briefNone:'No briefs from the team yet. The first comes after the 4:55 report.', quick:['What’s today’s update?','What do you need from me?','Who is behind target?','What’s the plan this week?'], c11_t:'Weekly team meeting', c11_d:'Every Sunday at 9:13 AM. Each employee presents their numbers; minutes with decisions and tasks follow.', lg6:'Team meeting 9:13', inMeeting:'In the weekly team meeting', inStandup:'In the meeting room: today’s wrap-up', lg7:'End-of-day meeting 5:07', c10_t:'Workforce plan (HR)', c10_d:'1st of every month at 10:21 AM. Team performance, gaps, and who to hire or merge.', nextHr:'Workforce plan ', c9_t:'Systems review (IT)', c9_d:'Every Wednesday at 5:38 PM. Health of tasks, dashboard and credits, plus improvement ideas.', lg5:'Systems review 5:38', nextIt:'Systems review ', c7_t:'Weekly finance report', c7_d:'Every Thursday at 5:12 PM. Costs, cost per lead, and recommendations.', c8_k:'In the dashboard', c8_t:'KPIs and costs', c8_d:'A KPI table for each employee against target, and a form to enter costs.', lg4:'Finance report 5:12',
+  note:'The office is an illustration: status follows the work schedule in Riyadh time. Real work is delivered to the team dashboard and your phone at 4:55 PM.',
+  hub_h:'All the team’s tools in one place', hub_p:'Come back here whenever you need anything: the dashboard, schedules, skills, files, and the information still missing.',
+  c1_k:'Open', c1_t:'Team portal', c1_d:'Reports, sales leads, content, KPIs, and costs.',
+  c2_k:'Scheduled task', c2_t:'Shift report and end-of-day meeting', c2_d:'Sunday to Thursday: the report at 4:55, then at 5:07 the manager gathers the team in the meeting room and asks each what they did. Both reach your phone.',
+  c3_t:'Executive manager review', c3_d:'Every Thursday at 5:26 PM. Team scores and skill updates for your approval.',
+  c4_k:'In the Integrabuild Team project', c4_t:'Company files', f1:'Products, data sheet, and contacts', f2:'Team operating guide',
+  c5_k:'Mention it in any chat', c5_t:'Approved skills', c5_d:'For example: “Sales, prepare a quote”, “Marketing, plan this week”, “Manager, improve the team”.',
+  c6_k:'Needed from you', c6_t:'Missing information', priv:'This site is private to you; nobody sees it unless you share it.',
+  missing:['Pricing method','Delivery times','Completed projects we may mention','Approved name for facades (Badael?)','Confirm the R values in the data sheet'],
+  teams_h:'Each department has an employee with specific skills', teams_p:'Every employee works through skills you approved. The executive manager improves them weekly and sends you the changes to approve.',
+  hours_h:'Sunday to Thursday, delivered before 5 PM', hours_p:'Orange is the Sunday team meeting, gold the shift report, green the Wednesday systems review, blue the finance report, red the executive manager’s Thursday review; the dark line is now.',
+  lg1:'Shift report 4:55', lg2:'Manager review 5:26', lg3:'Working hours 8 to 5',
+  how_h:'Nothing reaches a client without your approval', how_p:'The team works on its own all day, but decisions and sending stay in your hands.',
+  s1h:'They search', s1p:'Sales looks for new tenders and projects in Saudi Arabia and verifies every source.',
+  s2h:'They prepare', s2p:'3 leads with WhatsApp and email drafts, a ready post, and a reel brief in the navy and gold theme.',
+  s3h:'They deliver', s3p:'Everything is saved to the team dashboard, and the report reaches your phone at 4:55.',
+  s4h:'You decide', s4p:'You approve content and move leads forward; the executive manager learns from your decisions every Thursday.',
+  cta:'Open the portal', ft1:'Saudi manufacturer of advanced construction systems, Riyadh', ft2:'Contact', ft3:'Address', ft4:'Al Amir Turki Ibn Abdul Aziz Al Awal, Al Mohammadiyyah, Riyadh',
+  days:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'], off:'off', am:'AM', pm:'PM', today:'Today', tomorrow:'Tomorrow',
+  onduty:'Team is on duty', offduty:'Off duty', weekend:'Weekend', prep:'Preparing the shift report',
+  nextReport:'Shift report ', nextReview:'Weekly review ', nextFin:'Finance report ', axis:['8 AM','10','12 PM','2','4','6 PM'], lang:'العربية', svg:'Office floor plan',
+  rooms:[['Executive office','Leadership'],['Sales','Leads and quotes'],['Marketing studio','Content and reels'],['Finance','Costs and advice'],['IT','Systems and servers'],['Meeting room','Daily 5:07, Sunday 9:13'],['HR','Performance and hiring'],['Expansion & lounge','Desks for new hires']], vacant:'Vacant',
+  team:{
+   mgr:{name:'Executive manager', role:'Leads and develops the team', av:'M', room:'Manager’s office', tasks:['Reviews the week every Thursday and scores each employee out of 5','Finds the cause of repeated mistakes','Proposes skill improvements for your approval','Sets the top 3 decisions for next week'], work:['Following the team’s work','Reading this week’s reports','Reviewing content quality','Checking lead sources'], thu:'Preparing the Thursday review'},
+   hr:{name:'HR officer', role:'Human resources', av:'HR', room:'HR', tasks:['Measures each employee monthly against targets','Finds gaps and overlaps between roles','Recommends hiring or merging with evidence; you decide','Prepares the job description and skill for any new hire'], work:['Reviewing team performance','Updating the org chart','Studying role gaps','Preparing candidate files'], thu:'Following the team'},
+   it:{name:'IT specialist', role:'IT department', av:'I', room:'IT department', tasks:['Checks every scheduled task is on and succeeded','Audits dashboard data for gaps and duplicates','Watches tool credits before they run out','Proposes up to 5 system upgrades every Wednesday'], work:['Checking scheduled tasks','Auditing dashboard data','Reviewing tool credits','Preparing upgrade ideas'], thu:'Monitoring systems'},
+   fin:{name:'Finance manager', role:'Finance department', av:'F', room:'Finance department', tasks:['Calculates monthly team costs by category','Works out cost per lead, per approved content, and per deal','Prices quotes and calculates margin from your numbers','Gives 3 financial recommendations every Thursday'], work:['Reviewing entered costs','Calculating cost per lead','Looking for waste','Preparing recommendations'], thu:'Preparing the finance report'},
+   sales:{name:'Sales employee', role:'Sales department', av:'S', room:'Sales department', tasks:['Searches for new tenders and projects','Rates each lead: hot, warm, cold','Writes WhatsApp and email drafts','Prepares draft quotes'], work:['Searching for new tenders','Verifying news sources','Rating leads','Drafting messages','Saving leads to the dashboard']},
+   mkt:{name:'Marketing employee', role:'Marketing department', av:'M', room:'Marketing department', tasks:['Prepares tomorrow’s post in Saudi dialect','Writes the reel brief and voice-over script','Sticks to the navy and gold theme','Proposes the weekly content plan'], work:['Writing the post hook','Writing the reel script','Checking theme and colours','Preparing hashtags','Saving content to the dashboard']}
+  }
+ }
+};
+const LOOK = {
+  mgr:   { skin: '#c68d63', shade: '#9f6643', wear: 'thobe', cloth: '#f4f1ea', clothS: '#cfc8b8', head: 'ghutra', beard: 'full', bg: ['#f6a04d', '#1b2a52'], acc: 'pen' },
+  sales: { skin: '#b97c52', shade: '#8f5a37', wear: 'thobe', cloth: '#f4f1ea', clothS: '#cfc8b8', head: 'shemagh', beard: 'short', bg: ['#ff7e5f', '#23203f'], acc: 'phone' },
+  mkt:   { skin: '#d6a37c', shade: '#ad7a55', wear: 'abaya', cloth: '#1a2133', clothS: '#0f1422', head: 'hijab', hijab: '#203259', hijabS: '#152240', beard: 'none', bg: ['#ffb347', '#0f3d4c'], acc: 'tablet' },
+  fin:   { skin: '#c99067', shade: '#a06a45', wear: 'thobe', cloth: '#eef2f6', clothS: '#c4ccd6', head: 'ghutra', beard: 'goatee', glasses: true, bg: ['#ffd36e', '#14324f'], acc: 'pen' },
+  hr:    { skin: '#d9a985', shade: '#b07e5a', wear: 'abaya', cloth: '#2a1a24', clothS: '#1b1018', head: 'hijab', hijab: '#7a2448', hijabS: '#5a1834', beard: 'none', glasses: true, bg: ['#f49a7c', '#203a43'], acc: 'tablet' },
+  it:    { skin: '#b07650', shade: '#875636', wear: 'hoodie', cloth: '#26365a', clothS: '#1a2742', head: 'hair', beard: 'stubble', headphones: true, bg: ['#3fd0c9', '#1a1d3a'], acc: 'none' }
+};
+const OL = 'stroke="#15110e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"';
+function portrait(id) {
+  const L = LOOK[id], g = 'g-' + id;
+  let s = '<svg viewBox="0 0 200 220" role="img" aria-hidden="true"><defs><linearGradient id="' + g + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + L.bg[0] + '"/><stop offset="1" stop-color="' + L.bg[1] + '"/></linearGradient>' +
+    '<pattern id="chk-' + id + '" width="9" height="9" patternUnits="userSpaceOnUse"><rect width="9" height="9" fill="#fbf7f2"/><rect width="4" height="9" fill="#c8323a"/><rect width="9" height="4" fill="#c8323a" opacity=".75"/></pattern>' +
+    '<clipPath id="c-' + id + '"><rect width="200" height="220" rx="18"/></clipPath></defs><g clip-path="url(#c-' + id + ')">';
+  s += '<rect width="200" height="220" fill="url(#' + g + ')"/>';
+  s += '<circle cx="152" cy="70" r="30" fill="#ffe2a0" opacity=".85"/>';
+  s += '<g fill="#0c1230" opacity=".5"><rect x="8" y="128" width="18" height="60"/><rect x="150" y="118" width="16" height="70"/><rect x="170" y="134" width="22" height="60"/><path d="M30 190 L38 70 Q45 52 52 70 L60 190Z"/></g>';
+  s += '<ellipse cx="45" cy="80" rx="5" ry="7" fill="' + L.bg[0] + '" opacity=".9"/>';
+  // torso
+  s += '<path d="M12 222 C16 184 50 166 78 160 L122 160 C150 166 184 184 188 222 Z" fill="' + L.cloth + '" ' + OL + '/>';
+  s += '<path d="M122 160 C150 166 184 184 188 222 L134 222 C140 198 136 176 122 160Z" fill="' + L.clothS + '"/>';
+  if (L.wear === 'hoodie') {
+    s += '<path d="M60 172 C60 146 140 146 140 172 C124 162 76 162 60 172Z" fill="' + L.clothS + '" ' + OL + '/>';
+    s += '<path d="M92 172 L90 200 M108 172 L110 200" stroke="#e8e2d6" stroke-width="2.5"/>';
+  }
+  if (L.wear === 'thobe') s += '<path d="M86 160 L100 184 L114 160" fill="none" ' + OL + '/><path d="M100 184 L100 222" stroke="#15110e" stroke-width="1.5"/><circle cx="100" cy="194" r="2" fill="#c9a227"/>';
+  // neck
+  if (L.head !== 'hijab') s += '<path d="M85 134 L85 162 Q100 170 115 162 L115 134Z" fill="' + L.skin + '" ' + OL + '/><path d="M104 136 L115 136 L115 162 Q110 165 104 166Z" fill="' + L.shade + '"/>';
+  // ears
+  if (L.head === 'hair') s += '<ellipse cx="66" cy="106" rx="7" ry="11" fill="' + L.skin + '" ' + OL + '/><ellipse cx="134" cy="106" rx="7" ry="11" fill="' + L.shade + '" ' + OL + '/>';
+  // face
+  s += '<ellipse cx="100" cy="104" rx="34" ry="42" fill="' + L.skin + '" ' + OL + '/>';
+  s += '<path d="M112 64 C132 74 138 100 132 124 C126 140 114 146 104 146 C122 132 126 96 112 64Z" fill="' + L.shade + '"/>';
+  s += '<path d="M78 80 C84 72 92 70 98 70" stroke="#fff" stroke-opacity=".35" stroke-width="3" fill="none"/>';
+  // brows & eyes
+  s += '<path d="M80 92 Q88 86 97 90" stroke="#1e1410" stroke-width="4.5" fill="none" stroke-linecap="round"/><path d="M103 90 Q112 86 120 92" stroke="#1e1410" stroke-width="4.5" fill="none" stroke-linecap="round"/>';
+  [88, 112].forEach((x) => { s += '<path d="M' + (x - 6) + ' 101 Q' + x + ' 95 ' + (x + 6) + ' 101 Q' + x + ' 105 ' + (x - 6) + ' 101Z" fill="#fff" stroke="#15110e" stroke-width="1.6"/><circle cx="' + (x + 0.5) + '" cy="100.8" r="2.6" fill="#2a1a12"/>'; });
+  s += '<path d="M100 103 L95 118 Q100 122 105 118" fill="none" stroke="#15110e" stroke-width="2"/>';
+  // beard
+  if (L.beard === 'full' || L.beard === 'short') {
+    s += '<path d="M66 110 C66 138 80 150 100 152 C120 150 134 138 134 110 C128 130 116 138 100 138 C84 138 72 130 66 110Z" fill="#1f1712" opacity="' + (L.beard === 'full' ? 1 : .8) + '"/>';
+    s += '<path d="M86 126 Q100 119 114 126 Q100 130 86 126Z" fill="#1f1712"/>';
+  } else if (L.beard === 'goatee') {
+    s += '<path d="M89 134 Q100 154 111 134 Q100 141 89 134Z" fill="#2a1d15"/><path d="M88 126 Q100 120 112 126 Q100 129 88 126Z" fill="#2a1d15"/>';
+  } else if (L.beard === 'stubble') {
+    s += '<path d="M68 114 C70 140 84 148 100 148 C116 148 130 140 132 114 C126 132 114 140 100 140 C86 140 74 132 68 114Z" fill="#2a1d15" opacity=".35"/>';
+  }
+  s += '<path d="M91 132 Q100 136 109 132" fill="none" stroke="' + (L.beard === 'none' ? '#8a3b34' : '#c98f7a') + '" stroke-width="2.6" stroke-linecap="round"/>';
+  if (L.glasses) s += '<g fill="#ffffff" fill-opacity=".18" stroke="#15110e" stroke-width="2.6"><rect x="77" y="93" width="22" height="15" rx="5"/><rect x="101" y="93" width="22" height="15" rx="5"/></g><path d="M99 99 L101 99" stroke="#15110e" stroke-width="2.6"/>';
+  // headwear
+  if (L.head === 'ghutra' || L.head === 'shemagh') {
+    const fill = L.head === 'ghutra' ? '#fbfaf6' : 'url(#chk-' + id + ')';
+    s += '<path d="M58 112 C54 70 72 44 100 42 C128 44 146 70 142 112 C150 140 158 160 170 178 C152 174 140 162 136 150 C132 128 134 100 128 84 C118 74 82 74 72 84 C66 100 68 128 64 150 C60 162 48 174 30 178 C42 160 50 140 58 112Z" fill="' + fill + '" ' + OL + '/>';
+    s += '<path d="M128 84 C138 110 138 140 150 166 C156 170 162 174 170 178 C158 160 150 140 142 112 C144 90 138 70 126 58Z" fill="#000" opacity=".12"/>';
+    s += '<path d="M74 88 C70 116 66 144 46 170 M126 88 C130 116 136 144 154 170" fill="none" stroke="#15110e" stroke-opacity=".25" stroke-width="2"/>';
+    s += '<path d="M62 66 Q100 48 138 66" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round"/><path d="M60 74 Q100 56 140 74" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round"/>';
+  } else if (L.head === 'hijab') {
+    s += '<path fill-rule="evenodd" d="M56 120 C52 70 74 42 100 40 C126 42 148 70 144 120 C146 146 160 162 178 180 L22 180 C40 162 54 146 56 120Z M100 68 C80 68 69 86 69 106 C69 130 83 146 100 146 C117 146 131 130 131 106 C131 86 120 68 100 68Z" fill="' + L.hijab + '" ' + OL + '/>';
+    s += '<path d="M131 106 C131 130 117 146 100 146 C120 152 136 160 150 176 L178 180 C160 162 146 146 144 120 C146 96 140 76 128 62 C132 76 131 92 131 106Z" fill="' + L.hijabS + '"/>';
+    s += '<path d="M70 84 C76 72 88 66 100 66" stroke="#ffffff" stroke-opacity=".25" stroke-width="3" fill="none"/>';
+  } else if (L.head === 'hair') {
+    s += '<path d="M66 100 C60 64 84 50 106 54 C128 58 140 74 134 100 C130 86 122 80 112 80 C100 72 84 78 74 84 C70 90 68 96 66 100Z" fill="#1b1310" ' + OL + '/>';
+    s += '<path d="M84 62 C96 56 112 58 122 66" stroke="#5a4232" stroke-width="3" fill="none"/>';
+  }
+  if (L.headphones) s += '<path d="M68 150 C66 178 134 178 132 150" fill="none" stroke="#1c1c1f" stroke-width="7"/><circle cx="68" cy="150" r="10" fill="#2c2c30" ' + OL + '/><circle cx="132" cy="150" r="10" fill="#2c2c30" ' + OL + '/><circle cx="132" cy="150" r="4" fill="#3fd0c9"/>';
+  // accessories
+  if (L.acc === 'pen') s += '<rect x="132" y="178" width="4" height="22" rx="2" fill="#c9a227" stroke="#15110e" stroke-width="1.5"/>';
+  if (L.acc === 'phone') s += '<rect x="36" y="186" width="20" height="34" rx="4" fill="#111" stroke="#15110e" stroke-width="2" transform="rotate(-12 46 203)"/><rect x="39" y="190" width="14" height="24" rx="2" fill="#5fb3ff" transform="rotate(-12 46 203)"/>';
+  if (L.acc === 'tablet') s += '<rect x="122" y="182" width="48" height="36" rx="5" fill="#c9a227" stroke="#15110e" stroke-width="2.5" transform="rotate(8 146 200)"/><rect x="127" y="187" width="38" height="26" rx="2" fill="#d6e8ff" transform="rotate(8 146 200)"/>';
+  s += '</g><rect x="1.5" y="1.5" width="197" height="217" rx="17" fill="none" stroke="#15110e" stroke-width="3"/></svg>';
+  return s;
+}
+
+const TEAMINFO = `فريق IntegraBuild (مصنّع سعودي لأنظمة البناء المتقدمة بالرياض). المدير الأعلى: يوسف أبو عيد.
+الموظفين: المبيعات (فرص يومية من الأخبار والترسيات، تقييم ساخن/دافئ/بارد، مسودات رسائل)، التسويق (منشور وبريف ريل يومياً بثيم كحلي وذهبي)، المدير التنفيذي (يدير اجتماع الأحد 9:13 ومراجعة الخميس 5:26)، المدير المالي (تقرير الخميس 5:12، تكاليف وتكلفة الفرصة)، مسؤول التقنية IT (الأربعاء 5:38)، مسؤولة الموارد البشرية HR (أول الشهر 10:21).
+تقرير الدوام اليومي: الأحد للخميس 4:55 العصر، وبعده اجتماع نهاية اليوم 5:07 بغرفة الاجتماعات (كل موظف بيقول شو أنجز اليوم).
+الأهداف الأسبوعية: فرص جديدة 15، ساخن 30%، فرص حرّكها يوسف من "جديد" 40%، محتوى 10 قطع، معتمد أو منشور 70%، تقارير 5 من 5.
+القاعدة الذهبية: ما حدا بيبعت أي شي لبرا بدون موافقة يوسف.
+معلومات ناقصة من يوسف: طريقة التسعير، مدد التسليم، المشاريع المسموح نذكرها، اسم Badael، قيم R، سعر اشتراك Claude وخطة Adobe.
+الأدوات: Speko رصيد 9.51$، Higgsfield مجاني 10 كريدت، Picsart مجاني 5 كريدت أسبوعياً، Figma Starter مقعد View.`;
+let CHAT = [];
+try { const v = JSON.parse(localStorage.getItem('ib-chat') || '[]'); if (Array.isArray(v)) CHAT = v.slice(-30); } catch (e) {}
+let BRIEFS = [], briefState = 'loading', chatBusy = false, chatAbort = null;
+function saveChat() { try { localStorage.setItem('ib-chat', JSON.stringify(CHAT.slice(-30))); } catch (e) {} }
+function renderChat(partial) {
+  const box = document.getElementById('chatlog');
+  const msgs = CHAT.slice();
+  if (partial != null) msgs.push({ role: 'assistant', content: partial || '…' });
+  if (!msgs.length) { box.innerHTML = '<p class="chat-empty">' + esc(tr().chatEmpty) + '</p>'; return; }
+  box.innerHTML = msgs.map((m) => '<div class="msg ' + (m.role === 'user' ? 'me' : 'him') + '">' + esc(m.content) + '</div>').join('');
+  box.scrollTop = box.scrollHeight;
+}
+function briefText() {
+  if (briefState !== 'ok' || !BRIEFS.length) return 'ما في ملخصات محفوظة لسه من المهام المجدولة. أول تقرير دوام الساعة 4:55 العصر بأيام الدوام.';
+  return BRIEFS.slice(0, 14).map((b) => '[' + (b.date || '') + ' – ' + (b.from || '') + ']\n' + (b.text || '')).join('\n\n');
+}
+async function loadBriefs() {
+  const st = document.getElementById('briefst');
+  try {
+    const db = window.claude ? await claude.use('db') : null;
+    if (!db) { briefState = 'none'; st.textContent = tr().briefNone; return; }
+    const t = setTimeout(() => { if (briefState === 'loading') { briefState = 'none'; st.textContent = tr().briefNone; } }, 10000);
+    db.collection('brief').onSnapshot((snap) => {
+      clearTimeout(t);
+      const rows = [];
+      (snap.docs || snap).forEach((d) => { const v = typeof d.data === 'function' ? d.data() : d; rows.push(v); });
+      BRIEFS = rows.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+      briefState = 'ok';
+      st.textContent = BRIEFS.length ? tr().briefOk.replace('{n}', BRIEFS.length).replace('{d}', BRIEFS[0].date || '') : tr().briefNone;
+    }, () => { clearTimeout(t); briefState = 'none'; st.textContent = tr().briefNone; });
+  } catch (e) { briefState = 'none'; st.textContent = tr().briefNone; }
+}
+async function ask(q) {
+  q = String(q || '').trim();
+  if (!q || chatBusy) return;
+  const sample = window.claude ? await claude.use('sample') : null;
+  if (!sample) { document.getElementById('chatnote').textContent = tr().chatOff; return; }
+  CHAT.push({ role: 'user', content: q }); saveChat(); renderChat('');
+  chatBusy = true; document.getElementById('chatsend').disabled = true;
+  const t = riyadh();
+  const sys = 'إنت المدير التنفيذي لفريق الذكاء الاصطناعي بـ IntegraBuild، وبتحكي مع مديرك يوسف أبو عيد بمكتبك. جاوب بالعربي بلهجة شامية مختصرة ومباشرة (هو على الجوال)، إلا إذا كتب بالإنجليزي فجاوب بالإنجليزي. الوقت بالرياض الآن: ' + tr().days[t.day] + ' ' + pad(t.h) + ':' + pad(t.m) + '.\n' +
+    'اعتمد بس على المعلومات تحت. لا تخترع أرقام ولا نتائج ولا شغل ما صار. إذا المعلومة مش موجودة قول بصراحة إنها مش عندك، ومتى بتوصل (مثلاً بعد تقرير 4:55 أو اجتماع الأحد). إنت هون بتحكي وبتنصح بس: ما بتقدر تنفّذ تغييرات ولا تبعت شي لأي حدا. إذا يوسف طلب تغيير بالنظام، قله يطلبه بمحادثة Claude بمشروع Integrabuild Team.\n\n' +
+    'معلومات الفريق:\n' + TEAMINFO + '\n\nآخر الملخصات من المهام المجدولة (الأحدث أولاً):\n' + briefText();
+  const msgs = CHAT.slice(-12).map((m) => ({ role: m.role, content: m.content }));
+  msgs[0] = msgs[0].role === 'user' ? msgs[0] : msgs[0];
+  const input = [{ role: 'user', content: sys + '\n\n---\nبداية المحادثة.' }, { role: 'assistant', content: 'تمام، أنا جاهز.' }].concat(msgs);
+  chatAbort = new AbortController();
+  try {
+    const r = await sample(input, { cache: false, signal: chatAbort.signal, onText: ({ text }) => renderChat(text) });
+    CHAT.push({ role: 'assistant', content: r.text || '…' });
+  } catch (e) {
+    const msg = e && e.code === 'rate_limited' ? tr().chatBusy : e && e.code === 'not_granted' ? tr().chatOff : tr().chatErr;
+    CHAT.push({ role: 'assistant', content: (e && e.text) ? e.text : msg });
+  }
+  saveChat(); renderChat(); chatBusy = false; document.getElementById('chatsend').disabled = false;
+}
+
+const PO = { reports: [], leads: [], content: [], costs: [], meetings: [], ready: 0, err: '', db: null, tab: 'rep', rating: '' };
+const STAT = ['جديد', 'تم التواصل', 'مهتم', 'عرض سعر', 'مكسوب', 'خسرنا'];
+const CATS = ['اشتراكات', 'إعلانات', 'أدوات وتوليد محتوى', 'أخرى'];
+const POCOLS = ['reports', 'leads', 'content', 'costs', 'meetings'];
+const byDate = (a, b) => String(b.date || '').localeCompare(String(a.date || '')) || String(b.id).localeCompare(String(a.id));
+const rDay = (back) => new Date(Date.now() + 3 * 3600e3 - (back || 0) * 864e5).toISOString().slice(0, 10);
+const safeUrl = (u) => /^https:\/\//i.test(String(u || '')) ? String(u) : null;
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = String(text); return e; };
+const fmt = (n) => (n == null || !isFinite(n)) ? '—' : Math.round(n).toLocaleString('en-US');
+
+function kpi() {
+  const from = rDay(6), wk = (r) => String(r.date || '') >= from;
+  const L = PO.leads.filter(wk), C = PO.content.filter(wk), R = PO.reports.filter(wk);
+  const pct = (a, b) => b ? Math.round(a / b * 100) : null;
+  const hot = pct(L.filter((l) => l.rating === 'ساخن').length, L.length);
+  const moved = pct(L.filter((l) => l.status && l.status !== 'جديد').length, L.length);
+  const appr = pct(C.filter((c) => c.status === 'معتمد' || c.status === 'منشور').length, C.length);
+  const none = !L.length && !C.length && !R.length;
+  const row = (who, k, v, d, t, ok) => ({ who, k, d, t, s: (none || v == null) ? '—' : ok ? '✓' : '✗' });
+  return [
+    row(tr().w_sales, tr().k_leads, L.length, String(L.length), '≥ 15', L.length >= 15),
+    row(tr().w_sales, tr().k_hot, hot, hot == null ? '—' : hot + '%', '≥ 30%', hot >= 30),
+    row(tr().w_sales, tr().k_moved, moved, moved == null ? '—' : moved + '%', '≥ 40%', moved >= 40),
+    row(tr().w_mkt, tr().k_content, C.length, String(C.length), '≥ 10', C.length >= 10),
+    row(tr().w_mkt, tr().k_appr, appr, appr == null ? '—' : appr + '%', '≥ 70%', appr >= 70),
+    row(tr().w_team, tr().k_days, R.length, R.length + ' / 5', '5 / 5', R.length >= 5)
+  ];
+}
+function fin() {
+  const m = rDay(0).slice(0, 7), inM = (r) => String(r.date || '').slice(0, 7) === m;
+  const total = PO.costs.filter(inM).reduce((s, c) => s + (Number(c.amount) || 0), 0);
+  const nl = PO.leads.filter(inM).length;
+  const nc = PO.content.filter((c) => inM(c) && (c.status === 'معتمد' || c.status === 'منشور')).length;
+  return { total, perLead: nl ? total / nl : null, perContent: nc ? total / nc : null };
+}
+async function poWrite(fn) {
+  try { await fn(PO.db); document.getElementById('po-err').hidden = true; }
+  catch (e) { const p = document.getElementById('po-err'); p.textContent = tr().po_saveErr; p.hidden = false; }
+}
+function renderPortal() {
+  if (!document.getElementById('portal')) return;
+  const st = document.getElementById('po-state');
+  st.textContent = PO.err ? PO.err : PO.ready < POCOLS.length ? tr().po_loading : tr().po_live;
+  const pend = PO.content.filter((c) => !c.status || c.status === 'بانتظار الاعتماد').length;
+  const newL = PO.leads.filter((l) => !l.status || l.status === 'جديد').length;
+  const f = fin(), last = [...PO.reports].sort(byDate)[0];
+  const ks = [[PO.leads.length, tr().pk_leads, ''], [newL, tr().pk_new, newL ? 'warn' : ''], [pend, tr().pk_pend, pend ? 'warn' : ''], [fmt(f.total), tr().pk_cost, ''], [last ? last.date : '—', tr().pk_last, '']];
+  document.getElementById('po-kpis').innerHTML = ks.map((k) => '<div class="po-k ' + k[2] + '"><b>' + esc(k[0]) + '</b><span>' + esc(k[1]) + '</span></div>').join('');
+  document.querySelectorAll('.po-tab').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.p === PO.tab)));
+  document.querySelectorAll('.po-panel').forEach((p) => { p.hidden = p.dataset.panel !== PO.tab; });
+  const rep = document.getElementById('pp-rep'); rep.replaceChildren();
+  if (!last) rep.append(el('p', 'po-meta', tr().po_noRep));
+  else {
+    const c = el('div', 'po-card po-sec');
+    c.append(el('div', 'po-meta', last.date));
+    [['done', tr().r_done], ['needs', tr().r_needs], ['plan', tr().r_plan]].forEach(([k, lb]) => { if (last[k]) { c.append(el('h5', null, lb)); c.append(el('p', 'po-block', last[k])); } });
+    rep.append(c);
+  }
+  const rs = document.getElementById('po-rating');
+  if (!rs.options.length) [['', tr().all], ['ساخن', 'ساخن'], ['دافئ', 'دافئ'], ['بارد', 'بارد']].forEach(([v, t]) => rs.append(new Option(t, v)));
+  rs.value = PO.rating; rs.className = 'po-select';
+  const ll = document.getElementById('pp-leads'); ll.replaceChildren();
+  const leads = [...PO.leads].filter((l) => !PO.rating || l.rating === PO.rating).sort(byDate);
+  if (!leads.length) ll.append(el('p', 'po-meta', tr().po_noLeads));
+  leads.forEach((l) => {
+    const c = el('div', 'po-card');
+    const top = el('div', 'po-row'); top.append(el('h4', null, l.company || '—'));
+    top.append(el('span', 'po-pill ' + (l.rating === 'ساخن' ? 'hot' : l.rating === 'دافئ' ? 'warm' : ''), l.rating || '—')); c.append(top);
+    c.append(el('p', 'po-block', l.project || ''));
+    c.append(el('p', 'po-meta', l.why || ''));
+    const bar = el('div', 'po-row'); const meta = el('div', 'po-meta'); meta.append(l.date || '');
+    const u = safeUrl(l.url); if (u) { meta.append(' · '); const a = el('a', null, tr().src); a.href = u; a.target = '_blank'; a.rel = 'noopener'; meta.append(a); }
+    bar.append(meta);
+    const sel = el('select', 'po-select'); sel.setAttribute('aria-label', tr().status); STAT.forEach((s) => sel.append(new Option(s, s)));
+    sel.value = STAT.includes(l.status) ? l.status : 'جديد';
+    sel.addEventListener('change', () => poWrite((db) => db.doc('data/team/leads/' + l.id).update({ status: sel.value })));
+    bar.append(sel); c.append(bar);
+    if (l.whatsapp || l.email) { const d = el('details'); d.append(el('summary', null, tr().drafts)); if (l.whatsapp) { d.append(el('h5', null, 'WhatsApp / LinkedIn')); d.append(el('p', 'po-block', l.whatsapp)); } if (l.email) { d.append(el('h5', null, 'Email')); d.append(el('p', 'po-block', l.email)); } c.append(d); }
+    ll.append(c);
+  });
+  const cl = document.getElementById('pp-content'); cl.replaceChildren();
+  const cont = [...PO.content].sort(byDate);
+  if (!cont.length) cl.append(el('p', 'po-meta', tr().po_noContent));
+  cont.forEach((x) => {
+    const st2 = x.status || 'بانتظار الاعتماد';
+    const c = el('div', 'po-card');
+    const top = el('div', 'po-row'); top.append(el('span', 'po-meta', [x.kind, x.platform, x.for_date].filter(Boolean).join(' · ')));
+    top.append(el('span', 'po-pill ' + (st2 === 'بانتظار الاعتماد' ? 'warm' : 'ok'), st2)); c.append(top);
+    c.append(el('h4', null, x.hook || ''));
+    if (x.caption) c.append(el('p', 'po-block', x.caption));
+    if (x.hashtags) c.append(el('p', 'po-meta', x.hashtags));
+    if (x.script) { const d = el('details'); d.append(el('summary', null, tr().script)); d.append(el('p', 'po-block', x.script)); c.append(d); }
+    const acts = el('div', 'po-row');
+    const mk = (label, val, go) => { const b = el('button', 'po-btn' + (go ? ' go' : ''), label); b.type = 'button'; b.addEventListener('click', () => poWrite((db) => db.doc('data/team/content/' + x.id).update({ status: val }))); acts.append(b); };
+    if (st2 === 'بانتظار الاعتماد') { mk(tr().approve, 'معتمد', true); mk(tr().reject, 'مرفوض', false); }
+    else if (st2 === 'معتمد') mk(tr().published, 'منشور', true);
+    c.append(acts); cl.append(c);
+  });
+  const kt = document.getElementById('pp-kpi');
+  kt.innerHTML = '<thead><tr><th>' + esc(tr().kh_who) + '</th><th>' + esc(tr().kh_k) + '</th><th>' + esc(tr().kh_v) + '</th><th>' + esc(tr().kh_t) + '</th><th>' + esc(tr().kh_s) + '</th></tr></thead><tbody>' +
+    kpi().map((r) => '<tr><td>' + esc(r.who) + '</td><td>' + esc(r.k) + '</td><td class="num">' + esc(r.d) + '</td><td class="num">' + esc(r.t) + '</td><td class="' + (r.s === '✓' ? 'good' : r.s === '✗' ? 'bad' : 'po-meta') + '">' + r.s + '</td></tr>').join('') + '</tbody>';
+  const cs = document.getElementById('pc-cat'); if (!cs.options.length) CATS.forEach((c) => cs.append(new Option(c, c)));
+  const dt = document.getElementById('pc-date'); if (!dt.value) dt.value = rDay(0);
+  const cc = document.getElementById('pp-costs'); cc.replaceChildren();
+  const ff = el('div', 'po-card'); ff.append(el('h4', null, tr().finTitle)); ff.append(el('p', 'po-block', tr().finTotal + ': ' + fmt(f.total) + ' ' + tr().sar + '\n' + tr().finLead + ': ' + fmt(f.perLead) + '\n' + tr().finContent + ': ' + fmt(f.perContent))); cc.append(ff);
+  [...PO.costs].sort(byDate).forEach((x) => {
+    const c = el('div', 'po-card'); const r = el('div', 'po-row'); r.append(el('h4', null, x.item || '')); r.append(el('strong', null, fmt(Number(x.amount)) + ' ' + tr().sar)); c.append(r);
+    c.append(el('p', 'po-meta', [x.category, x.date].filter(Boolean).join(' · ')));
+    const b = el('button', 'po-btn', tr().del); b.type = 'button'; b.addEventListener('click', () => poWrite((db) => db.doc('data/team/costs/' + x.id).delete())); c.append(b); cc.append(c);
+  });
+  const mm = document.getElementById('pp-meet'); mm.replaceChildren();
+  const meets = [...PO.meetings].sort(byDate);
+  if (!meets.length) mm.append(el('p', 'po-meta', tr().po_noMeet));
+  meets.forEach((m, i) => {
+    const host = i === 0 ? el('div', 'po-card po-sec') : el('details', 'po-card po-sec');
+    const head = (m.kind || tr().weekly) + ' · ' + (m.date || '');
+    if (i === 0) host.append(el('h4', null, head)); else host.append(el('summary', null, head));
+    [['summary', tr().m_sum], ['updates', tr().m_upd], ['decisions', tr().m_dec], ['actions', tr().m_act], ['needs', tr().m_need]].forEach(([k, lb]) => { if (m[k]) { host.append(el('h5', null, lb)); host.append(el('p', 'po-block', m[k])); } });
+    mm.append(host);
+  });
+}
+async function startPortal() {
+  const db = window.claude ? await claude.use('db') : null;
+  if (!db) { PO.err = tr().po_off; renderPortal(); return; }
+  PO.db = db;
+  const timer = setTimeout(() => { if (PO.ready < POCOLS.length) { PO.err = tr().po_slow; renderPortal(); } }, 10000);
+  POCOLS.forEach((name) => {
+    let first = true;
+    db.collection('data/team/' + name).onSnapshot((snap) => {
+      PO[name] = snap.docs.map((d) => Object.assign({ id: d.id }, d.data()));
+      if (first && !snap.metadata.fromCache) { first = false; PO.ready++; if (PO.ready >= POCOLS.length) { clearTimeout(timer); PO.err = ''; } }
+      renderPortal();
+    }, () => { PO.err = tr().po_off; renderPortal(); });
+  });
+}
+
+const SKILLS = ['integrabuild-hr','integrabuild-it','integrabuild-finance-manager','integrabuild-executive-manager','integrabuild-sales','integrabuild-lead-research','integrabuild-marketing','integrabuild-brand','integrabuild-daily-report'];
+const SKILLMAP = { mgr:[3,7], sales:[4,5,7,8], mkt:[6,7,8], fin:[2,7], it:[1], hr:[0,7] };
+let L = 'ar';
+try { const v = localStorage.getItem('ib-lang'); if (v === 'en' || v === 'ar') L = v; } catch (e) {}
+let picked = 'sales';
+const tr = () => T[L];
+
+function riyadh() { const d = new Date(Date.now() + 3 * 3600e3); return { day: d.getUTCDay(), h: d.getUTCHours(), m: d.getUTCMinutes() }; }
+function onDuty(t) { const mins = t.h * 60 + t.m; return t.day <= 4 && mins >= 480 && mins < 1020; }
+function pad(n) { return String(n).padStart(2, '0'); }
+function fmt12(h, m) { const hh = h % 12 || 12; return hh + ':' + pad(m) + ' ' + (h >= 12 ? tr().pm : tr().am); }
+function nextMonthly() {
+  const d = new Date(Date.now() + 3 * 3600e3);
+  let y = d.getUTCFullYear(), m = d.getUTCMonth();
+  const past = d.getUTCDate() > 1 || d.getUTCHours() * 60 + d.getUTCMinutes() >= 621;
+  if (past) { m += 1; if (m > 11) { m = 0; y += 1; } }
+  const n = new Date(Date.UTC(y, m, 1));
+  return tr().days[n.getUTCDay()] + ' ' + n.getUTCDate() + '/' + (m + 1) + ' ' + fmt12(10, 21);
+}
+function nextRun(t, days, H, M) {
+  for (let k = 0; k < 8; k++) {
+    const d = (t.day + k) % 7;
+    if (!days.includes(d)) continue;
+    if (k === 0 && t.h * 60 + t.m >= H * 60 + M) continue;
+    return (k === 0 ? tr().today : k === 1 ? tr().tomorrow : tr().days[d]) + ' ' + fmt12(H, M);
+  }
+  return '';
+}
+
+const S = 16, C = 0.866;
+const iso = (x, y, z) => [(x - y) * C * S, (x + y) * 0.5 * S - z * S];
+const P = (l) => l.map((p) => iso(p[0], p[1], p[2]).map((v) => v.toFixed(1)).join(',')).join(' ');
+let pts = [];
+function poly(l, fill, extra) { l.forEach((p) => pts.push(iso(p[0], p[1], p[2]))); return '<polygon points="' + P(l) + '" fill="' + fill + '"' + (extra || '') + '/>'; }
+function box(x, y, z, w, d, h, c, extra) {
+  return poly([[x, y, z + h], [x + w, y, z + h], [x + w, y + d, z + h], [x, y + d, z + h]], c[0], extra) +
+    poly([[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + h], [x + w, y, z + h]], c[1], extra) +
+    poly([[x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + h], [x, y + d, z + h]], c[2], extra);
+}
+const MAT = { wall:['#2d5089','#22406f','#1a345c'], desk:['#e2c992','#bfa56c','#9b8350'], mon:['#0b1424','#13203a','#0a1220'], chair:['#3a4a66','#2c3a52','#222d40'], shirt:['#f6f3ec','#ddd8cc','#c7c2b5'], gold:['#e3bf4a','#c9a227','#a5841d'], table:['#f0ede6','#d3cfc6','#b5b1a8'], pot:['#c9a227','#a5841d','#86691a'] };
+function screenLines(x0, y, z0, w, h, active, n) {
+  let s = '';
+  for (let i = 0; i < n; i++) {
+    const v = 0.78 - i * (0.6 / Math.max(1, n - 1)), len = [0.7, 0.5, 0.62, 0.4][i % 4];
+    const a = iso(x0 + w * 0.12, y, z0 + h * v), b = iso(x0 + w * (0.12 + len), y, z0 + h * v);
+    s += '<line class="ln' + (active ? ' go' : '') + '" style="animation-delay:' + (i * 0.4) + 's" x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) + '" y2="' + b[1].toFixed(1) + '"/>';
+  }
+  return s;
+}
+function person(x, y, id) {
+  const L = LOOK[id];
+  const head = iso(x + 0.4, y + 0.3, 2.45);
+  pts.push([head[0], head[1] - 12]);
+  const hx = head[0].toFixed(1), hy = head[1].toFixed(1);
+  const body = [L.cloth, L.clothS, L.clothS];
+  let h = box(x - 0.2, y - 0.1, 0, 1.2, 1.0, 0.85, MAT.chair) +
+    box(x, y, 0.85, 0.8, 0.6, 1.15, body, ' stroke="#15110e" stroke-width=".8"') +
+    box(x - 0.05, y - 0.55, 1.5, 0.22, 0.75, 0.2, body) + box(x + 0.63, y - 0.55, 1.5, 0.22, 0.75, 0.2, body) +
+    box(x - 0.2, y + 0.75, 0.85, 1.2, 0.25, 1.1, MAT.chair) +
+    '<circle cx="' + hx + '" cy="' + hy + '" r="6.8" fill="' + L.skin + '" stroke="#15110e" stroke-width="1.2"/>';
+  if (L.head === 'ghutra' || L.head === 'shemagh') {
+    const c = L.head === 'ghutra' ? '#fbfaf6' : '#d23a3a';
+    h += '<path d="M' + (head[0] - 7.8).toFixed(1) + ' ' + (head[1] + 1).toFixed(1) + ' a7.8 7.8 0 0 1 15.6 0 l2.6 10 h-20.8z" fill="' + c + '" stroke="#15110e" stroke-width="1.2"/>' +
+      '<rect x="' + (head[0] - 7.6).toFixed(1) + '" y="' + (head[1] - 3.8).toFixed(1) + '" width="15.2" height="2.6" rx="1.2" fill="#111"/>';
+  } else if (L.head === 'hijab') {
+    h += '<path d="M' + (head[0] - 8.5).toFixed(1) + ' ' + (head[1] + 1).toFixed(1) + ' a8.5 8.5 0 0 1 17 0 l2 11 h-21z" fill="' + L.hijab + '" stroke="#15110e" stroke-width="1.2"/>';
+  } else {
+    h += '<path d="M' + (head[0] - 6.8).toFixed(1) + ' ' + (head[1] - 0.5).toFixed(1) + ' a6.8 6.8 0 0 1 13.6 0 q-6.8 -3 -13.6 0z" fill="#1b1310"/>' +
+      (L.headphones ? '<path d="M' + (head[0] - 7.5).toFixed(1) + ' ' + head[1].toFixed(1) + ' a7.5 7.5 0 0 1 15 0" fill="none" stroke="#2c2c30" stroke-width="2.2"/>' : '');
+  }
+  return h;
+}
+function deskUnit(id, x, y, active, gold) {
+  const lamp = iso(x + 1.5, y + 2.0, 3.6);
+  pts.push([lamp[0], lamp[1] - 8]);
+  const sel = poly([[x - 0.6, y - 0.4, 0.01], [x + 3.6, y - 0.4, 0.01], [x + 3.6, y + 3.2, 0.01], [x - 0.6, y + 3.2, 0.01]], 'none', ' class="sel" stroke="#c9a227" stroke-width="2.5" stroke-dasharray="6 5"');
+  return '<g class="desk" data-id="' + id + '" tabindex="0" role="button" aria-label="' + tr().team[id].name + '">' + sel + shadowOf(x, y, 3, 1.4) +
+    box(x, y, 0, 3, 1.4, 1.1, MAT.desk) + (active ? poly([[x + 0.5, y + 0.3, 1.101], [x + 2.5, y + 0.3, 1.101], [x + 2.5, y + 1.3, 1.101], [x + 0.5, y + 1.3, 1.101]], '#9fd0ff', ' opacity=".35"') : '') + box(x + 0.6, y + 0.15, 1.1, 1.8, 0.14, 1.05, MAT.mon) +
+    poly([[x + 0.68, y + 0.29, 1.18], [x + 2.32, y + 0.29, 1.18], [x + 2.32, y + 0.29, 2.07], [x + 0.68, y + 0.29, 2.07]], active ? '#d6e8ff' : '#2a3a55') +
+    screenLines(x + 0.68, y + 0.29, 1.18, 1.64, 0.89, active, 4) +
+    box(x + 2.5, y + 0.5, 1.1, 0.3, 0.3, 0.35, ['#ffffff', '#e5e5e5', '#cfcfcf']) + person(x + 1.1, y + 1.85, id) +
+    '<circle cx="' + lamp[0].toFixed(1) + '" cy="' + lamp[1].toFixed(1) + '" r="5.5" fill="' + (active ? '#3ccf8e' : '#7d8aa0') + '" stroke="#0e2240" stroke-width="2"/></g>';
+}
+function plant(x, y) {
+  const top = iso(x + 0.35, y + 0.35, 1.5);
+  return box(x, y, 0, 0.7, 0.7, 0.6, MAT.pot) + '<circle cx="' + top[0].toFixed(1) + '" cy="' + top[1].toFixed(1) + '" r="13" fill="#2f8f5b"/><circle cx="' + (top[0] - 6).toFixed(1) + '" cy="' + (top[1] - 7).toFixed(1) + '" r="8" fill="#3fae70"/>';
+}
+function esc(t) { return String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function shadowOf(x, y, w, d) { return poly([[x + 0.25, y + 0.25, 0.002], [x + w + 0.35, y + 0.25, 0.002], [x + w + 0.35, y + d + 0.35, 0.002], [x + 0.25, y + d + 0.35, 0.002]], '#000', ' opacity=".22"'); }
+function wallPlaneY(x0, x1, z0, z1, fill, extra) { return poly([[x0, 0.01, z0], [x1, 0.01, z0], [x1, 0.01, z1], [x0, 0.01, z1]], fill, extra); }
+function wallPlaneX(y0, y1, z0, z1, fill, extra) { return poly([[0.01, y0, z0], [0.01, y1, z0], [0.01, y1, z1], [0.01, y0, z1]], fill, extra); }
+function windowY(x0, x1) {
+  let s = wallPlaneY(x0, x1, 1.0, 3.0, 'url(#sky)', ' stroke="#0b1a33" stroke-width="2"');
+  const hs = [0.35, 0.6, 0.45, 0.8, 0.3, 0.55, 0.7, 0.4];
+  for (let i = 0; i < (x1 - x0) / 0.7 - 1; i++) { const xa = x0 + 0.2 + i * 0.7, h = hs[i % hs.length]; s += wallPlaneY(xa, xa + 0.45, 1.0, 1.0 + h, '#0e1838', ' opacity=".75"'); }
+  for (let m = x0 + 1.6; m < x1 - 0.3; m += 1.6) { const a = iso(m, 0.01, 1.0), b = iso(m, 0.01, 3.0); s += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) + '" y2="' + b[1].toFixed(1) + '" stroke="#0b1a33" stroke-width="2"/>'; }
+  return s;
+}
+function windowX(y0, y1) {
+  let s = wallPlaneX(y0, y1, 1.0, 3.0, 'url(#sky)', ' stroke="#0b1a33" stroke-width="2"');
+  const hs = [0.5, 0.3, 0.75, 0.4, 0.6];
+  for (let i = 0; i < (y1 - y0) / 0.7 - 1; i++) { const ya = y0 + 0.2 + i * 0.7, h = hs[i % hs.length]; s += wallPlaneX(ya, ya + 0.45, 1.0, 1.0 + h, '#0e1838', ' opacity=".75"'); }
+  for (let m = y0 + 1.6; m < y1 - 0.3; m += 1.6) { const a = iso(0.01, m, 1.0), b = iso(0.01, m, 3.0); s += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) + '" y2="' + b[1].toFixed(1) + '" stroke="#0b1a33" stroke-width="2"/>'; }
+  return s;
+}
+function lightPool(x, y, r) { const c = iso(x, y, 0); return '<ellipse cx="' + c[0].toFixed(1) + '" cy="' + c[1].toFixed(1) + '" rx="' + (r * S * 1.25).toFixed(1) + '" ry="' + (r * S * 0.72).toFixed(1) + '" fill="url(#pool)"/>'; }
+function zone(x0, y0, x1, y1, fill) { return poly([[x0, y0, 0.004], [x1, y0, 0.004], [x1, y1, 0.004], [x0, y1, 0.004]], fill); }
+function chair(x, y) { return box(x, y, 0, 0.8, 0.7, 0.75, MAT.chair) + box(x, y, 0.75, 0.8, 0.15, 0.7, MAT.chair); }
+function vacantDesk(x, y) {
+  const t = iso(x + 1.5, y + 2.3, 0.01);
+  return shadowOf(x, y, 3, 1.4) + box(x, y, 0, 3, 1.4, 1.1, MAT.desk) + box(x + 0.6, y + 0.15, 1.1, 1.8, 0.14, 1.05, MAT.mon) +
+    poly([[x + 0.68, y + 0.29, 1.18], [x + 2.32, y + 0.29, 1.18], [x + 2.32, y + 0.29, 2.07], [x + 0.68, y + 0.29, 2.07]], '#1b2740') +
+    chair(x + 1.1, y + 1.8) +
+    '<g class="vac"><rect x="' + (t[0] - 22).toFixed(1) + '" y="' + (t[1] + 4).toFixed(1) + '" width="44" height="18" rx="9" fill="#0e2240" stroke="#c9a227" stroke-dasharray="3 3"/><text x="' + t[0].toFixed(1) + '" y="' + (t[1] + 17).toFixed(1) + '" text-anchor="middle" font-size="11" fill="#c9a227">' + esc(tr().vacant) + '</text></g>';
+}
+function rack(x, y) {
+  let s = shadowOf(x, y, 0.9, 1.0) + box(x, y, 0, 0.9, 1.0, 2.8, ['#1a2233', '#121a28', '#0c1320']);
+  for (let z = 0.4; z < 2.6; z += 0.35) { const a = iso(x + 0.9, y + 0.25, z); s += '<circle cx="' + a[0].toFixed(1) + '" cy="' + a[1].toFixed(1) + '" r="1.8" fill="' + (z > 1.5 ? '#3fd0c9' : '#3ccf8e') + '"/>'; }
+  return s;
+}
+function label(x, y, r, z) {
+  const p = iso(x, y, z || 0);
+  const w = r[0].length * 7.4 + 24;
+  pts.push([p[0] - w / 2, p[1] - 14]); pts.push([p[0] + w / 2, p[1] + 14]);
+  return '<g class="tag"><rect x="' + (p[0] - w / 2).toFixed(1) + '" y="' + (p[1] - 13).toFixed(1) + '" width="' + w.toFixed(0) + '" height="26" rx="13" fill="#0b1a33" fill-opacity=".92" stroke="#c9a227" stroke-width="1.5"><title>' + esc(r[1]) + '</title></rect>' +
+    '<text class="lbl" x="' + p[0].toFixed(1) + '" y="' + (p[1] + 5).toFixed(1) + '" text-anchor="middle">' + esc(r[0]) + '</text></g>';
+}
+function glass(x, y, w, d, h) { return box(x, y, 0, w, d, h, ['#bcd6ff55', '#bcd6ff2a', '#bcd6ff3a'], ' stroke="#ffffff66" stroke-width="1"'); }
+function drawScene() {
+  const duty = onDuty(riyadh()), R = tr().rooms, W = 32, D = 21;
+  pts = [];
+  let s = '<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a5a"/><stop offset=".55" stop-color="#e06a5a"/><stop offset="1" stop-color="#2a3b6e"/></linearGradient>' +
+    '<linearGradient id="flr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22457a"/><stop offset="1" stop-color="#132a4e"/></linearGradient>' +
+    '<radialGradient id="pool"><stop offset="0" stop-color="#fff3d6" stop-opacity=".22"/><stop offset="1" stop-color="#fff3d6" stop-opacity="0"/></radialGradient></defs>';
+  s += box(-0.4, -0.4, -0.5, W + 0.8, D + 0.8, 0.5, ['#2b4a7c', '#1b3358', '#152a4a']);
+  s += poly([[0, 0, 0], [W, 0, 0], [W, D, 0], [0, D, 0]], 'url(#flr)');
+  for (let i = 1; i < W; i++) { const a = iso(i, 0, 0), b = iso(i, D, 0); s += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) + '" y2="' + b[1].toFixed(1) + '" stroke="#ffffff0b"/>'; }
+  for (let j = 1; j < D; j++) { const a = iso(0, j, 0), b = iso(W, j, 0); s += '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) + '" y2="' + b[1].toFixed(1) + '" stroke="#ffffff0b"/>'; }
+  s += zone(0.3, 0.3, 8.9, 6.9, '#c9a22724') + zone(9.5, 0.3, 20.9, 6.9, '#3ccf8e16') + zone(21.5, 0.3, 31.7, 6.9, '#ffffff10');
+  s += zone(0.3, 7.5, 9.9, 20.7, '#5fb3ff16') + zone(10.5, 7.5, 16.9, 14.4, '#12a5941c') + zone(17.5, 7.5, 24.4, 14.4, '#2f7de11c') + zone(24.9, 7.5, 31.7, 14.4, '#c2185b18') + zone(10.5, 14.9, 31.7, 20.7, '#ffffff0a');
+  s += box(0, -0.35, 0, W, 0.35, 3.6, MAT.wall) + box(-0.35, -0.35, 0, 0.35, D + 0.35, 3.6, MAT.wall);
+  s += windowY(0.6, 8.4) + windowY(21.8, 31.4) + windowX(0.8, 6.4) + windowX(16.8, 20.4);
+  s += box(10.5, 0, 1.2, 9, 0.08, 1.9, MAT.mon) + poly([[10.7, 0.09, 1.35], [19.3, 0.09, 1.35], [19.3, 0.09, 2.95], [10.7, 0.09, 2.95]], '#0f2a4d');
+  [0.35, 0.62, 0.48, 0.85, 0.7, 0.55, 0.9].forEach((v, i) => { s += poly([[11.2 + i * 1.2, 0.1, 1.5], [12 + i * 1.2, 0.1, 1.5], [12 + i * 1.2, 0.1, 1.5 + v * 1.3], [11.2 + i * 1.2, 0.1, 1.5 + v * 1.3]], i === 6 ? '#c9a227' : '#5fb3ff'); });
+  const lg = iso(10.6, 0.02, 3.45);
+  s += '<text transform="matrix(0.866,0.5,0,1,' + lg[0].toFixed(1) + ',' + lg[1].toFixed(1) + ')" font-family="IBM Plex Sans Arabic,sans-serif" font-weight="700" font-size="17" fill="#e3bf4a">IntegraBuild</text>';
+  s += box(23, 0, 1.0, 6, 0.08, 2.2, MAT.mon) + poly([[23.2, 0.09, 1.15], [28.8, 0.09, 1.15], [28.8, 0.09, 3.05], [23.2, 0.09, 3.05]], '#d6e8ff') + screenLines(23.2, 0.1, 1.15, 5.6, 1.9, duty, 4);
+  s += wallPlaneX(11.5, 15.8, 0.6, 3.2, '#c9a227', ' opacity=".9"');
+  [[4.5, 3.5, 3], [15, 3.5, 3.4], [26.5, 3.5, 3.2], [5, 13, 3.4], [13.5, 11, 3], [21, 11, 3], [28.3, 11, 3], [21, 17.8, 4]].forEach((l) => { s += lightPool(l[0], l[1], l[2]); });
+  s += box(0.05, 6.6, 0, 0.55, 0.0001 + 0.01, 0.01, MAT.wall);
+  s += plant(30.6, 0.6) + plant(9.9 - 1.2, 0.6) + plant(20.0, 0.6);
+  s += deskUnit('mgr', 2.2, 2.0, duty, true);
+  s += shadowOf(5.9, 4.4, 1.6, 1.6) + box(5.9, 4.4, 0, 1.6, 1.6, 0.75, MAT.table) + chair(7.7, 4.8) + chair(6.1, 6.1 - 0.2);
+  s += deskUnit('sales', 11.4, 2.2, duty, false);
+  s += plant(16.4, 4.6);
+  s += shadowOf(23.6, 2.6, 5.6, 2.2) + box(23.6, 2.6, 0, 5.6, 2.2, 0.85, MAT.table);
+  [24.0, 25.8, 27.6].forEach((x) => { s += chair(x, 1.6) + chair(x, 5.0); });
+  s += glass(9.05, 0, 0.12, 7.1, 1.4) + glass(21.05, 0, 0.12, 7.1, 1.4);
+  s += glass(0, 7.05, W, 0.12, 1.1);
+  s += box(1.2, 8.0, 0, 0.18, 0.18, 2.3, ['#555', '#444', '#333']) + box(0.7, 7.6, 2.3, 1.2, 0.5, 0.8, ['#ffffff', '#eaeaea', '#d0d0d0']);
+  s += deskUnit('mkt', 3.4, 10.0, duty, false);
+  s += box(7.2, 10.2, 0, 0.12, 0.12, 1.9, ['#333', '#222', '#111']) + box(6.9, 9.9, 1.9, 0.7, 0.7, 0.45, ['#222', '#1a1a1a', '#111']);
+  s += plant(0.6, 19.4) + plant(8.6, 19.4);
+  s += box(1.4, 17.2, 0, 0.12, 0.12, 2.0, ['#333', '#222', '#111']) + box(1.0, 16.8, 2.0, 0.9, 0.2, 0.9, ['#fff8e1', '#f0e6c8', '#d9cfae']);
+  s += shadowOf(4.0, 15.6, 2.2, 1.4) + box(4.0, 15.6, 0, 2.2, 1.4, 0.8, MAT.table);
+  s += glass(10.05, 7.2, 0.12, D - 7.2, 1.1);
+  s += rack(15.6, 7.7) + rack(15.6, 8.9);
+  s += deskUnit('it', 11.4, 9.6, duty, false);
+  s += glass(17.05, 7.2, 0.12, 7.4, 1.1);
+  s += deskUnit('fin', 18.8, 9.6, duty, false);
+  s += plant(23.4, 7.8);
+  s += glass(24.55, 7.2, 0.12, 7.4, 1.1);
+  s += deskUnit('hr', 26.2, 9.6, duty, false);
+  s += plant(30.8, 7.8);
+  s += glass(10.2, 14.55, W - 10.2, 0.12, 1.0);
+  s += vacantDesk(11.6, 15.8) + vacantDesk(15.8, 15.8) + vacantDesk(20.0, 15.8);
+  s += shadowOf(25.2, 18.6, 4.4, 1.2) + box(25.2, 18.6, 0, 4.4, 1.2, 0.5, ['#3a5a8c', '#2d4a77', '#223a61']) + box(25.2, 19.5, 0.5, 4.4, 0.4, 0.7, ['#3a5a8c', '#2d4a77', '#223a61']) + box(26.4, 16.8, 0, 2, 1.2, 0.45, MAT.table);
+  s += shadowOf(29.8, 15.4, 1.6, 2.6) + box(29.8, 15.4, 0, 1.6, 2.6, 1.1, ['#f0ede6', '#d3cfc6', '#b5b1a8']) + box(30.1, 15.8, 1.1, 0.6, 0.5, 0.55, ['#333', '#222', '#111']);
+  s += plant(31.0, 20.0) + plant(10.8, 20.0);
+  s += label(4.6, -0.2, R[0], 4.6) + label(18.2, -0.2, R[1], 4.6) + label(27.0, -0.2, R[5], 4.6) + label(-0.2, 12.5, R[2], 4.6) +
+    label(13.6, 7.4, R[4], 2.6) + label(21.0, 7.4, R[3], 2.6) + label(29.6, 7.4, R[6], 3.4) + label(32.2, 18.2, R[7], 0);
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  pts.forEach((p) => { x0 = Math.min(x0, p[0]); y0 = Math.min(y0, p[1]); x1 = Math.max(x1, p[0]); y1 = Math.max(y1, p[1]); });
+  x0 -= 8; x1 += 8; y0 -= 8; y1 += 8;
+  const svg = document.getElementById('floor');
+  svg.setAttribute('viewBox', x0.toFixed(0) + ' ' + y0.toFixed(0) + ' ' + (x1 - x0).toFixed(0) + ' ' + (y1 - y0).toFixed(0));
+  svg.setAttribute('aria-label', tr().svg);
+  svg.innerHTML = s;
+  svg.querySelectorAll('.desk').forEach((g) => {
+    g.classList.toggle('picked', g.dataset.id === picked);
+    g.addEventListener('click', () => pick(g.dataset.id));
+    g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(g.dataset.id); } });
+  });
+}
+
+function nowText(id, t) {
+  const p = tr().team[id];
+  if (t.day <= 4 && t.h === 17 && t.m < 30) return tr().inStandup;
+  if (!onDuty(t)) return t.day >= 5 ? tr().weekend : tr().offduty;
+  if (t.day === 0 && t.h === 9) return tr().inMeeting;
+  if ((id === 'mgr' || id === 'fin') && t.day === 4 && t.h >= 15) return p.thu;
+  if (id === 'it' && t.day === 3 && t.h >= 15) return p.thu;
+  if (id === 'hr') return p.work[(t.h + Math.floor(t.m / 20)) % p.work.length];
+  if ((id === 'sales' || id === 'mkt') && t.h === 16) return tr().prep;
+  return p.work[(t.h + Math.floor(t.m / 20)) % p.work.length];
+}
+function pick(id) {
+  picked = id;
+  const t = riyadh(), p = tr().team[id];
+  document.getElementById('pav').innerHTML = portrait(id);
+  document.getElementById('pname').textContent = p.name;
+  document.getElementById('prole').textContent = p.role;
+  document.getElementById('pnow').textContent = nowText(id, t);
+  document.getElementById('pdot').className = 'dot' + (onDuty(t) ? ' on' : '');
+  document.getElementById('pnext').textContent = id === 'mgr' ? tr().nextReview + nextRun(t, [4], 17, 26) : id === 'fin' ? tr().nextFin + nextRun(t, [4], 17, 12) : id === 'it' ? tr().nextIt + nextRun(t, [3], 17, 38) : id === 'hr' ? tr().nextHr + nextMonthly() : tr().nextReport + nextRun(t, [0, 1, 2, 3, 4], 16, 55);
+  document.querySelectorAll('.tab').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.id === id)));
+  document.querySelectorAll('.desk').forEach((g) => g.classList.toggle('picked', g.dataset.id === id));
+}
+function drawCards() {
+  document.getElementById('cards').innerHTML = ['mgr', 'fin', 'hr', 'it', 'sales', 'mkt'].map((id) => {
+    const p = tr().team[id];
+    return '<article class="card"><div class="pt">' + portrait(id) + '</div><h4>' + esc(p.name) + '</h4><p class="role">' + esc(p.room) + '</p><ul>' + p.tasks.map((x) => '<li>' + esc(x) + '</li>').join('') + '</ul><div class="chips">' + SKILLMAP[id].map((k) => '<span class="chip">' + SKILLS[k] + '</span>').join('') + '</div></article>';
+  }).join('');
+  document.getElementById('skills').innerHTML = SKILLS.map((k) => '<span class="chip">' + k + '</span>').join('');
+  document.getElementById('missing').innerHTML = tr().missing.map((x) => '<li>' + esc(x) + '</li>').join('');
+  document.getElementById('axis').innerHTML = tr().axis.map((x) => '<span>' + x + '</span>').join('');
+}
+function drawSched() {
+  const t = riyadh(), pct = (h) => ((h - 8) / 10 * 100), nowH = t.h + t.m / 60;
+  document.getElementById('sched').innerHTML = [0, 1, 2, 3, 4, 5, 6].map((d) => {
+    const work = d <= 4;
+    let inner = work ? '<span class="shift" style="inset-inline-start:0;width:' + pct(17) + '%"></span><span class="mk" style="inset-inline-start:calc(' + pct(16 + 55 / 60) + '% - 1px)"></span>' : '';
+    if (work) inner += '<span class="mk stand" style="inset-inline-start:calc(' + pct(17 + 7 / 60) + '% - 1px)"></span>';
+    if (d === 0) inner += '<span class="mk meet" style="inset-inline-start:calc(' + pct(9 + 13 / 60) + '% - 1px)"></span>';
+    if (d === 3) inner += '<span class="mk it" style="inset-inline-start:calc(' + pct(17 + 38 / 60) + '% - 1px)"></span>';
+    if (d === 4) inner += '<span class="mk fin" style="inset-inline-start:calc(' + pct(17 + 12 / 60) + '% - 1px)"></span>';
+    if (d === 4) inner += '<span class="mk mgr" style="inset-inline-start:calc(' + pct(17 + 26 / 60) + '% - 1px)"></span>';
+    if (d === t.day && nowH >= 8 && nowH <= 18) inner += '<span class="nowline" style="inset-inline-start:' + pct(nowH) + '%"></span>';
+    return '<div class="day"><b>' + tr().days[d] + (work ? '' : ' <span style="color:var(--muted);font-weight:400">' + tr().off + '</span>') + '</b><div class="track">' + inner + '</div></div>';
+  }).join('');
+  document.getElementById('n1').textContent = '→ ' + nextRun(t, [0, 1, 2, 3, 4], 16, 55);
+  document.getElementById('n2').textContent = '→ ' + nextRun(t, [4], 17, 26);
+  document.getElementById('n3').textContent = '→ ' + nextRun(t, [4], 17, 12);
+  document.getElementById('n4').textContent = '→ ' + nextRun(t, [3], 17, 38);
+  document.getElementById('n5').textContent = '→ ' + nextMonthly();
+  document.getElementById('n6').textContent = '→ ' + nextRun(t, [0], 9, 13);
+}
+function tick() {
+  const t = riyadh(), duty = onDuty(t);
+  document.getElementById('clock').textContent = fmt12(t.h, t.m);
+  document.getElementById('sdot').className = 'dot' + (duty ? ' on' : '');
+  document.getElementById('stext').textContent = duty ? tr().onduty : (t.day >= 5 ? tr().weekend : tr().offduty);
+}
+function applyLang() {
+  const root = document.documentElement;
+  root.lang = L; root.dir = L === 'ar' ? 'rtl' : 'ltr';
+  document.title = tr().title;
+  document.querySelectorAll('[data-t]').forEach((el) => { const v = tr()[el.dataset.t]; if (typeof v === 'string') el.textContent = v; });
+  document.getElementById('langbtn').textContent = tr().lang;
+  drawScene(); drawCards(); drawSched(); tick(); pick(picked);
+  document.getElementById('mgrpt').innerHTML = portrait('mgr');
+  document.getElementById('chatin').placeholder = tr().chatEmpty;
+  document.getElementById('quick').innerHTML = tr().quick.map((q) => '<button type="button" class="qbtn">' + esc(q) + '</button>').join('');
+  if (briefState !== 'loading') document.getElementById('briefst').textContent = BRIEFS.length ? tr().briefOk.replace('{n}', BRIEFS.length).replace('{d}', BRIEFS[0].date || '') : tr().briefNone;
+  renderChat();
+  document.getElementById('po-rating').replaceChildren();
+  document.getElementById('pc-cat').replaceChildren();
+  renderPortal();
+}
+document.getElementById('langbtn').addEventListener('click', () => {
+  L = L === 'ar' ? 'en' : 'ar';
+  try { localStorage.setItem('ib-lang', L); } catch (e) {}
+  applyLang();
+});
+document.querySelectorAll('.tab').forEach((b) => b.addEventListener('click', () => pick(b.dataset.id)));
+document.getElementById('quick').addEventListener('click', (e) => { const b = e.target.closest('.qbtn'); if (b) ask(b.textContent); });
+document.getElementById('chatform').addEventListener('submit', (e) => { e.preventDefault(); const i = document.getElementById('chatin'); const v = i.value; i.value = ''; ask(v); });
+document.getElementById('chatclear').addEventListener('click', () => { if (chatAbort) chatAbort.abort(); CHAT = []; saveChat(); renderChat(); });
+document.getElementById('po-tabs').addEventListener('click', (e) => { const b = e.target.closest('.po-tab'); if (b) { PO.tab = b.dataset.p; renderPortal(); } });
+document.getElementById('po-rating').addEventListener('change', (e) => { PO.rating = e.target.value; renderPortal(); });
+document.getElementById('po-cost').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const item = document.getElementById('pc-item').value.trim(), amount = Number(document.getElementById('pc-amt').value);
+  if (!item || !isFinite(amount) || amount < 0 || !PO.db) return;
+  poWrite(async (db) => { await db.collection('data/team/costs').add({ date: document.getElementById('pc-date').value || rDay(0), item, category: document.getElementById('pc-cat').value, amount }); document.getElementById('pc-item').value = ''; document.getElementById('pc-amt').value = ''; });
+});
+applyLang();
+loadBriefs();
+startPortal();
+let lastDuty = onDuty(riyadh());
+const timer = setInterval(() => { const d = onDuty(riyadh()); tick(); drawSched(); if (d !== lastDuty) { lastDuty = d; drawScene(); } pick(picked); }, 30000);
+}
+
+</script>
+</body>
+</html>
